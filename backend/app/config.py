@@ -20,6 +20,10 @@ class Settings:
         self.jwt_secret_key = os.getenv("JWT_SECRET_KEY") or os.getenv("SECRET_KEY") or "dev-secret-change-me"
         self.access_token_expire_minutes = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "720"))
         self.database_url = os.getenv("DATABASE_URL") or f"sqlite:///{(STORAGE_DIR / 'cognipick.db').as_posix()}"
+        if "USER:PASS@HOST" in self.database_url.upper():
+            import logging
+            logging.getLogger("cognipick").warning("DATABASE_URL 이 예시(플레이스홀더) 값입니다. SQLite 로 대체합니다. 실제 TiDB 주소로 교체하세요.")
+            self.database_url = f"sqlite:///{(STORAGE_DIR / 'cognipick.db').as_posix()}"
         self.db_ssl = _bool("DB_SSL", True)
         self.cors_origins = [o.strip().rstrip("/") for o in (os.getenv("CORS_ORIGINS") or DEFAULT_CORS).split(",") if o.strip()]
         self.frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173").rstrip("/")

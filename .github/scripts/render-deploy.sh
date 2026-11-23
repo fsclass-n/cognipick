@@ -31,6 +31,12 @@ if [ -n "$EXPECT_ROOT" ]; then
   fi
 fi
 
+# DATABASE_URL 이 플레이스홀더(예시) 값인지 경고한다
+DBV=$(echo "$SVC" | jq -r '[.envVars[]? | select(.key == "DATABASE_URL")] | .[0].value // empty')
+if [ -n "$DBV" ] && echo "$DBV" | grep -qi 'USER:PASS@HOST'; then
+  echo "::warning::Render 의 DATABASE_URL 이 예시 값(USER:PASS@HOST)입니다. 앱은 SQLite 로 대체 동작합니다. TiDB 를 쓰려면 Render 환경 변수를 실제 주소로 교체하세요."
+fi
+
 print_logs() {
   echo "::group::Render ${1} logs (최근 150줄)"
   curl -fsS "${AUTH[@]}" "${API}/logs?ownerId=${OWNER}&resource=${ID}&type=${1}&direction=backward&limit=150"     | jq -r '.logs | reverse | .[] | "\(.timestamp) \(.message)"' || echo "(로그 조회 실패)"
