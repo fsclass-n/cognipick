@@ -83,7 +83,7 @@ jobs:
       - name: Deploy cognipick-api to Render
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
-        run: bash .github/scripts/render-deploy.sh cognipick-api "${{ vars.RENDER_API_SERVICE_ID }}"
+        run: bash .github/scripts/render-deploy.sh cognipick-api "${{ vars.RENDER_API_SERVICE_ID }}" .
       - name: Health check
         if: env.HAS_KEY == 'true'
         run: |
@@ -98,4 +98,4 @@ jobs:
       - name: Deploy cognipick (Static Site) to Render
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
-        run: bash .github/scripts/render-deploy.sh cognipick "${{ vars.RENDER_FRONTEND_SERVICE_ID }}"
+        run: bash .github/scripts/render-deploy.sh cognipick "${{ vars.RENDER_FRONTEND_SERVICE_ID }}" frontend

@@ -39,7 +39,7 @@ cd frontend && npm ci && npm run dev
 
 최초 1회 설정
 1. Render 에서 서비스를 직접 생성하고 **Auto-Deploy 를 Off** 로 둡니다 (중복 배포 방지).
-   - Web Service `cognipick-api`: Runtime Docker, Dockerfile `./Dockerfile`, Health Check `/health`, 환경 변수는 `.env.example` 참고
+   - Web Service `cognipick-api`: Runtime Docker, **Root Directory 비움(저장소 루트)**, Dockerfile `./Dockerfile`, Docker Context `.`, Health Check `/health`, 환경 변수는 `.env.example` 참고
    - Static Site `cognipick`: Root `frontend`, Build `npm ci && npm run build`, Publish `dist`, Rewrite `/*` → `/index.html`, 환경 변수 `VITE_API_BASE_URL=https://cognipick-api.onrender.com`
 2. GitHub 저장소 Settings → Secrets → Actions 에 `RENDER_API_KEY` (Render Account Settings → API Keys) 등록
 3. (선택) Variables 에 `RENDER_API_SERVICE_ID`, `RENDER_FRONTEND_SERVICE_ID` 등록 — 없으면 서비스 이름으로 자동 조회
