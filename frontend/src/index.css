@@ -5,7 +5,7 @@
 /* =========================================================
    cognipick Design Tokens — "Pick Signal"
    일렉트릭 인디고(메인) + 시그널 민트(포인트 1종), 네이비 잉크
-   시그니처 형태: 아치 프레임(사진) + 둥근 사각 로고 + 열린 고리 c
+   시그니처 형태: 조약돌(Pebble) 프레임 + 움직이는 점선 + 열린 고리 c 로고
    제목/수치: Sora (+ Pretendard 한글 폴백) · 본문: Pretendard
    ========================================================= */
 @theme {
@@ -88,8 +88,14 @@
 @utility dots-dark { background-image: radial-gradient(rgb(255 255 255 / .1) 1px, transparent 1px); background-size: 22px 22px; }
 @utility paper-grid { background-image: linear-gradient(var(--color-line) 1px, transparent 1px), linear-gradient(90deg, var(--color-line) 1px, transparent 1px); background-size: 28px 28px; }
 
-/* 시그니처 프레임: 위가 둥근 아치 */
-@utility arch { border-radius: 999px 999px 2rem 2rem; overflow: hidden; }
+/* 시그니처 프레임: 천천히 모양이 바뀌는 조약돌(Pebble) + 둘레를 도는 점선 */
+@keyframes morph {
+  0%, 100% { border-radius: 58% 42% 38% 62% / 52% 38% 62% 48%; }
+  33% { border-radius: 42% 58% 62% 38% / 45% 55% 45% 55%; }
+  66% { border-radius: 50% 50% 40% 60% / 60% 40% 58% 42%; }
+}
+@utility pebble { border-radius: 58% 42% 38% 62% / 52% 38% 62% 48%; overflow: hidden; animation: morph 14s ease-in-out infinite; }
+@utility pebble-line { position: absolute; border: 2px dashed var(--color-brand-300); border-radius: 50% 50% 40% 60% / 60% 40% 58% 42%; animation: morph 14s ease-in-out infinite reverse, spin 40s linear infinite; pointer-events: none; }
 
 /* 사진 듀오톤: 브랜드 인디고 톤으로 통일 */
 @utility duotone { position: relative; isolation: isolate; &::after { content: ''; position: absolute; inset: 0; background: linear-gradient(170deg, rgb(74 58 255 / .22), rgb(11 14 44 / 0) 45%, rgb(11 14 44 / .5)); pointer-events: none; } }
