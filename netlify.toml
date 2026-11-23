@@ -1,0 +1,21 @@
+# Netlify 데모 - https://cognipick.netlify.app (저장소 연결 시 푸시마다 자동 빌드, Deploy Hook 불필요)
+[build]
+  base = "frontend"
+  command = "npm ci && npm run build"
+  publish = "dist"
+  # frontend/ 가 바뀌지 않았다면 빌드를 건너뛴다
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ../netlify.toml"
+
+[build.environment]
+  NODE_VERSION = "22"
+  VITE_API_BASE_URL = "https://cognipick-api.onrender.com"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

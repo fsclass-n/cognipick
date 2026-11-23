@@ -1,0 +1,31 @@
+# CI: 테스트/빌드 검증만 수행한다. 배포는 Render(autoDeploy)·Netlify 의 Git 연동이 push 시 자동으로 처리하므로
+# RENDER_API_DEPLOY_HOOK / RENDER_FRONTEND_DEPLOY_HOOK 같은 Secret 은 사용하지 않는다.
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: pip }
+      - run: pip install -r requirements.txt
+      - run: python -m pytest backend/tests -q
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run: { working-directory: frontend }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: frontend/package-lock.json }
+      - run: npm ci
+      - run: npm run build
+        env:
+          VITE_API_BASE_URL: https://cognipick-api.onrender.com
