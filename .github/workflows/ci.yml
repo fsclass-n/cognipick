@@ -1,11 +1,10 @@
-# CI: 테스트/빌드 검증만 수행한다. 배포는 Render(autoDeploy)·Netlify 의 Git 연동이 push 시 자동으로 처리하므로
-# RENDER_API_DEPLOY_HOOK / RENDER_FRONTEND_DEPLOY_HOOK 같은 Secret 은 사용하지 않는다.
+# PR / develop 브랜치 검증 (main 은 deploy.yml 에서 검증 후 배포)
 name: CI
 
 on:
-  push:
-    branches: [main, develop]
   pull_request:
+  push:
+    branches: [develop]
 
 jobs:
   backend:

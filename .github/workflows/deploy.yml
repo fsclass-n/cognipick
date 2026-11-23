@@ -1,0 +1,94 @@
+# main 푸시 시 변경된 영역만 검증 후 Render 에 배포한다 (GitHub Actions + Render REST API).
+#  - backend/, requirements.txt, Dockerfile 변경 -> cognipick-api (Web Service)
+#  - frontend/ 변경                          -> cognipick (Static Site)
+# 필요한 Secret: RENDER_API_KEY 하나. (RENDER_API_DEPLOY_HOOK / RENDER_FRONTEND_DEPLOY_HOOK 사용 안 함)
+# 선택 Variables: RENDER_API_SERVICE_ID, RENDER_FRONTEND_SERVICE_ID (없으면 서비스 이름으로 조회)
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "강제 배포 대상"
+        type: choice
+        options: [all, api, web]
+        default: all
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.f.outputs.api == 'true' || inputs.target == 'all' || inputs.target == 'api' }}
+      web: ${{ steps.f.outputs.web == 'true' || inputs.target == 'all' || inputs.target == 'web' }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: f
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            api:
+              - 'backend/**'
+              - 'requirements.txt'
+              - 'Dockerfile'
+            web:
+              - 'frontend/**'
+
+  test-api:
+    needs: changes
+    if: needs.changes.outputs.api == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: pip }
+      - run: pip install -r requirements.txt
+      - run: python -m pytest backend/tests -q
+
+  build-web:
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run: { working-directory: frontend }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: frontend/package-lock.json }
+      - run: npm ci
+      - run: npm run build
+        env:
+          VITE_API_BASE_URL: https://cognipick-api.onrender.com
+
+  deploy-api:
+    needs: test-api
+    runs-on: ubuntu-latest
+    environment: { name: production-api, url: "https://cognipick-api.onrender.com" }
+    env:
+      HAS_KEY: ${{ secrets.RENDER_API_KEY != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy cognipick-api to Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: bash .github/scripts/render-deploy.sh cognipick-api "${{ vars.RENDER_API_SERVICE_ID }}"
+      - name: Health check
+        if: env.HAS_KEY == 'true'
+        run: |
+          for i in $(seq 1 10); do curl -fsS https://cognipick-api.onrender.com/health && exit 0; sleep 15; done; exit 1
+
+  deploy-web:
+    needs: build-web
+    runs-on: ubuntu-latest
+    environment: { name: production-web, url: "https://cognipick.onrender.com" }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy cognipick (Static Site) to Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: bash .github/scripts/render-deploy.sh cognipick "${{ vars.RENDER_FRONTEND_SERVICE_ID }}"

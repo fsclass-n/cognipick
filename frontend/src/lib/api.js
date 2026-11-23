@@ -28,6 +28,7 @@ export async function api(path, { method = 'GET', body, silent = false } = {}) {
     throw new ApiError('서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.', 0)
   }
   const data = await res.json().catch(() => null)
+  if (method !== 'GET') cache.clear()
   if (!res.ok) {
     const err = new ApiError(detailText(data?.detail), res.status, data)
     if (res.status === 403 && data?.read_only && !silent) toast(err.message, 'warn')
@@ -37,6 +38,10 @@ export async function api(path, { method = 'GET', body, silent = false } = {}) {
   return data
 }
 
+const cache = new Map()
+const TTL = 60_000
+export const invalidate = () => cache.clear()
+
 /** GET 데이터 훅: loading / error / reload 상태를 일관되게 제공 */
 export function useApi(path, enabled = true) {
   const [state, setState] = useState({ data: null, loading: enabled, error: null })
@@ -44,9 +49,12 @@ export function useApi(path, enabled = true) {
   useEffect(() => {
     if (!enabled || !path) return
     let alive = true
+    const key = `${tokenStore.get() || ''}|${path}`
+    const hit = cache.get(key)
+    if (hit && Date.now() - hit.t < TTL && tick === 0) { setState({ data: hit.data, loading: false, error: null }); return }
     setState((s) => ({ ...s, loading: true, error: null }))
     api(path, { silent: true })
-      .then((data) => alive && setState({ data, loading: false, error: null }))
+      .then((data) => { cache.set(key, { data, t: Date.now() }); if (alive) setState({ data, loading: false, error: null }) })
       .catch((error) => alive && setState({ data: null, loading: false, error }))
     return () => { alive = false }
   }, [path, enabled, tick])

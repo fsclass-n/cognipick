@@ -6,13 +6,14 @@ from sqlalchemy.orm import Session
 from ..database import get_db, utcnow
 from ..models import Course, Enrollment, Notice, Skill, User
 from ..security import get_current_user, get_optional_user
+from ..services.catalog_data import SKILL_CATEGORY
 
 router = APIRouter(prefix="/api", tags=["content"])
 
 
 def course_out(c: Course, progress: int | None = None, detail: bool = False) -> dict:
     d = {"id": c.id, "title": c.title, "instructor": c.instructor, "level": c.level, "hours": c.hours, "hue": c.hue,
-         "skills": c.skills, "rating": c.rating, "learners": c.learners, "published": c.published, "progress": progress}
+         "skills": c.skills, "category": SKILL_CATEGORY.get((c.skills or [""])[0], "기타"), "rating": c.rating, "learners": c.learners, "published": c.published, "progress": progress}
     if detail:
         d |= {"summary": c.summary, "curriculum": c.curriculum}
     return d

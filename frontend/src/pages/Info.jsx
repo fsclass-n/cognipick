@@ -20,7 +20,7 @@ function Notices() {
   return (
     <Async state={state} isEmpty={(d) => !d.length} empty={<Empty title="등록된 공지가 없어요" />}>
       {(d) => <ul className="space-y-3">{d.map((n) => (
-        <li key={n.id} className="card p-5"><p className="font-bold">{n.pinned && <span className="mr-2 rounded bg-accent px-1.5 py-0.5 text-caption text-accent-ink">고정</span>}{n.title}</p><p className="text-body mt-1 text-muted">{n.body}</p><p className="mt-2 text-caption text-muted">{n.created_at.slice(0, 10)}</p></li>
+        <li key={n.id} className="tile !p-5"><p className="font-bold">{n.pinned && <span className="mr-2 rounded bg-accent px-1.5 py-0.5 text-caption text-white">고정</span>}{n.title}</p><p className="text-body mt-1 text-muted">{n.body}</p><p className="mt-2 text-caption text-muted">{n.created_at.slice(0, 10)}</p></li>
       ))}</ul>}
     </Async>
   )

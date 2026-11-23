@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 
-const COLORS = ['#4f46e5', '#0ea5e9', '#84cc16', '#f97316', '#ec4899']
+const COLORS = ['#3a35e0', '#ff6b4a', '#111114', '#15935f', '#9aa1ff']
 
 export function RadarChart({ axes, size = 340 }) {
   const c = size / 2, R = size / 2 - 52, n = axes.length
@@ -9,11 +9,11 @@ export function RadarChart({ axes, size = 340 }) {
   const poly = (key) => axes.map((a, i) => pt(i, a[key]).join(',')).join(' ')
   return (
     <svg viewBox={`0 0 ${size} ${size}`} className="mx-auto w-full max-w-[420px]" role="img" aria-label="역량 레이더 차트">
-      {[25, 50, 75, 100].map((l) => <polygon key={l} points={axes.map((_, i) => pt(i, l).join(',')).join(' ')} fill="none" stroke="#e1e4f0" />)}
-      {axes.map((_, i) => <line key={i} x1={c} y1={c} x2={pt(i, 100)[0]} y2={pt(i, 100)[1]} stroke="#e1e4f0" />)}
-      <polygon points={poly('b')} fill="#c6f432" fillOpacity="0.25" stroke="#8fb800" strokeWidth="2" strokeDasharray="5 4" />
-      <polygon points={poly('a')} fill="#4f46e5" fillOpacity="0.28" stroke="#4f46e5" strokeWidth="2.5" />
-      {axes.map((a, i) => { const [x, y] = pt(i, a.a); return <circle key={i} cx={x} cy={y} r="4" fill="#4f46e5" stroke="#fff" strokeWidth="2" /> })}
+      {[25, 50, 75, 100].map((l) => <polygon key={l} points={axes.map((_, i) => pt(i, l).join(',')).join(' ')} fill="none" stroke="#e4e2db" />)}
+      {axes.map((_, i) => <line key={i} x1={c} y1={c} x2={pt(i, 100)[0]} y2={pt(i, 100)[1]} stroke="#e4e2db" />)}
+      <polygon points={poly('b')} fill="#ff6b4a" fillOpacity="0.12" stroke="#ff6b4a" strokeWidth="2" strokeDasharray="5 4" />
+      <polygon points={poly('a')} fill="#3a35e0" fillOpacity="0.28" stroke="#3a35e0" strokeWidth="2.5" />
+      {axes.map((a, i) => { const [x, y] = pt(i, a.a); return <circle key={i} cx={x} cy={y} r="4" fill="#3a35e0" stroke="#fff" strokeWidth="2" /> })}
       {axes.map((a, i) => {
         const [x, y] = pt(i, 122)
         return <text key={a.label} x={x} y={y} textAnchor="middle" dominantBaseline="middle" className="fill-fg" style={{ fontSize: 11, fontWeight: 600 }}>{a.label}</text>
@@ -47,7 +47,7 @@ export function LineChart({ labels, series, height = 280, area = false, unit = '
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" onMouseMove={onMove} onMouseLeave={() => setHover(null)} role="img" aria-label="추세 차트">
         {[0, 0.25, 0.5, 0.75, 1].map((t) => (
           <g key={t}>
-            <line x1={p.l} x2={W - p.r} y1={y(max * t)} y2={y(max * t)} stroke="#e8eaf4" />
+            <line x1={p.l} x2={W - p.r} y1={y(max * t)} y2={y(max * t)} stroke="#ece9e2" />
             <text x={p.l - 8} y={y(max * t)} textAnchor="end" dominantBaseline="middle" className="fill-muted" style={{ fontSize: 10 }}>{Math.round(max * t).toLocaleString()}</text>
           </g>
         ))}
@@ -63,7 +63,7 @@ export function LineChart({ labels, series, height = 280, area = false, unit = '
             </g>
           )
         })}
-        {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={p.t} y2={H - p.b} stroke="#9aa3c7" strokeDasharray="3 3" />}
+        {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={p.t} y2={H - p.b} stroke="#6b6b76" strokeDasharray="3 3" />}
       </svg>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
         <Legend items={series.map((s, k) => ({ label: s.name, color: s.color || COLORS[k % COLORS.length] }))} />
@@ -87,7 +87,7 @@ export function WordCloud({ words }) {
       {list.map((w) => (
         <span key={w.text} title={`${w.text} · ${w.weight.toLocaleString()}건 · 3개월 ${w.growth > 0 ? '+' : ''}${w.growth}%`}
           className="cursor-default font-display font-bold leading-tight transition-transform hover:scale-110"
-          style={{ fontSize: w.size, transform: `rotate(${w.rot}deg)`, color: w.growth >= 8 ? '#6d8b00' : w.growth < 0 ? '#94a0c8' : w.size > 30 ? '#4338ca' : '#5a5cf0' }}>
+          style={{ fontSize: w.size, transform: `rotate(${w.rot}deg)`, color: w.growth >= 8 ? '#ff6b4a' : w.growth < 0 ? '#a5a3ad' : w.size > 30 ? '#111114' : '#3a35e0' }}>
           {w.text}
         </span>
       ))}
@@ -95,7 +95,7 @@ export function WordCloud({ words }) {
   )
 }
 
-/** Gap Bridge: 요구 수준(눈금) 대비 내 점수와 부족 구간(형광 사선)을 한 줄로 */
+/** Gap Bridge: 요구 수준(눈금) 대비 내 점수와 부족 구간(코랄 사선)을 한 줄로 */
 export function GapBridge({ gaps }) {
   return (
     <ul className="space-y-4">
@@ -105,12 +105,12 @@ export function GapBridge({ gaps }) {
             <span className="font-semibold">{g.skill}</span>
             <span className="text-caption text-muted">
               내 점수 <b className="text-fg">{g.score}</b> / 요구 <b className="text-fg">{g.required}</b>
-              {g.gap > 0 ? <b className="ml-2 rounded bg-accent px-1.5 py-0.5 text-accent-ink">GAP -{g.gap}</b> : <b className="ml-2 text-ok">충족</b>}
+              {g.gap > 0 ? <b className="ml-2 rounded bg-accent-soft px-1.5 py-0.5 text-accent-ink">GAP -{g.gap}</b> : <b className="ml-2 text-ok">충족</b>}
             </span>
           </div>
           <div className="relative h-3.5 rounded-full bg-surface-2">
             <div className="absolute inset-y-0 left-0 rounded-full bg-brand-600 transition-all duration-700" style={{ width: `${Math.min(100, g.score)}%` }} />
-            {g.gap > 0 && <div className="absolute inset-y-0 rounded-r-full" style={{ left: `${g.score}%`, width: `${g.gap}%`, background: 'repeating-linear-gradient(135deg,#c6f432 0 5px,#e6fb98 5px 10px)' }} />}
+            {g.gap > 0 && <div className="absolute inset-y-0 rounded-r-full" style={{ left: `${g.score}%`, width: `${g.gap}%`, background: 'repeating-linear-gradient(135deg,#ff6b4a 0 4px,#ffd3c7 4px 8px)' }} />}
             <div className="absolute -inset-y-1 w-0.5 bg-ink" style={{ left: `${g.required}%` }} />
           </div>
         </li>
@@ -119,18 +119,18 @@ export function GapBridge({ gaps }) {
   )
 }
 
-export function Sparkline({ values, color = '#4f46e5', w = 120, h = 36 }) {
+export function Sparkline({ values, color = '#3a35e0', w = 120, h = 36 }) {
   const max = Math.max(...values), min = Math.min(...values)
   const pts = values.map((v, i) => `${(i * w) / (values.length - 1)},${h - 3 - ((v - min) / (max - min || 1)) * (h - 6)}`).join(' ')
-  return <svg viewBox={`0 0 ${w} ${h}`} className="h-9 w-28"><polyline points={pts} fill="none" stroke={color} strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" /></svg>
+  return <svg viewBox={`0 0 ${w} ${h}`} className="h-9 w-20 shrink-0"><polyline points={pts} fill="none" stroke={color} strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" /></svg>
 }
 
 export function Donut({ value, size = 96, label }) {
   const r = 38, c = 2 * Math.PI * r
   return (
     <svg viewBox="0 0 100 100" width={size} height={size} role="img" aria-label={`${label} ${value}%`}>
-      <circle cx="50" cy="50" r={r} fill="none" stroke="#e8eaf4" strokeWidth="11" />
-      <circle cx="50" cy="50" r={r} fill="none" stroke="#4f46e5" strokeWidth="11" strokeLinecap="round" strokeDasharray={`${(c * value) / 100} ${c}`} transform="rotate(-90 50 50)" />
+      <circle cx="50" cy="50" r={r} fill="none" stroke="#ece9e2" strokeWidth="11" />
+      <circle cx="50" cy="50" r={r} fill="none" stroke="#3a35e0" strokeWidth="11" strokeLinecap="round" strokeDasharray={`${(c * value) / 100} ${c}`} transform="rotate(-90 50 50)" />
       <text x="50" y="54" textAnchor="middle" className="fill-fg" style={{ fontSize: 20, fontWeight: 700, fontFamily: 'var(--font-display)' }}>{Math.round(value)}</text>
     </svg>
   )

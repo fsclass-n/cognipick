@@ -29,7 +29,20 @@ cd frontend && npm ci && npm run dev
 ## 권한
 `learner` / `company` / `admin`(서버 `ADMIN_SECRET_KEY` 로 로그인) / `admin_readonly`(테스트 관리자: 모든 관리자 화면 조회 가능, 변경 요청은 서버에서 403 차단)
 
-## 자동 배포 (Deploy Hook 미사용)
-`main` 에 push 하면 Render Blueprint(`render.yaml`, `autoDeploy` + `buildFilter`)와 Netlify Git 연동이 변경된 서비스만 자동 배포합니다.
-`RENDER_API_DEPLOY_HOOK`, `RENDER_FRONTEND_DEPLOY_HOOK` Secret 은 필요하지 않으며, GitHub Actions 는 테스트/빌드 검증(CI)만 수행합니다.
-최초 1회: Render 에서 *New > Blueprint* 로 저장소 연결, Netlify 에서 저장소 import. `DATABASE_URL`, `GEMINI_API_KEY` 등 `sync: false` 값은 Render 대시보드에서 입력합니다.
+## 자동 배포 (GitHub Actions → Render API, Deploy Hook 미사용)
+`main` 에 push 하면 `.github/workflows/deploy.yml` 이 변경 영역을 감지해 검증 후 Render REST API 로 배포합니다.
+
+| 변경 경로 | 검증 | 배포 대상 |
+|---|---|---|
+| `backend/**`, `requirements.txt`, `Dockerfile` | pytest | Render Web Service `cognipick-api` |
+| `frontend/**` | `npm run build` | Render Static Site `cognipick` |
+
+최초 1회 설정
+1. Render 에서 서비스를 직접 생성하고 **Auto-Deploy 를 Off** 로 둡니다 (중복 배포 방지).
+   - Web Service `cognipick-api`: Runtime Docker, Dockerfile `./Dockerfile`, Health Check `/health`, 환경 변수는 `.env.example` 참고
+   - Static Site `cognipick`: Root `frontend`, Build `npm ci && npm run build`, Publish `dist`, Rewrite `/*` → `/index.html`, 환경 변수 `VITE_API_BASE_URL=https://cognipick-api.onrender.com`
+2. GitHub 저장소 Settings → Secrets → Actions 에 `RENDER_API_KEY` (Render Account Settings → API Keys) 등록
+3. (선택) Variables 에 `RENDER_API_SERVICE_ID`, `RENDER_FRONTEND_SERVICE_ID` 등록 — 없으면 서비스 이름으로 자동 조회
+
+`RENDER_API_DEPLOY_HOOK`, `RENDER_FRONTEND_DEPLOY_HOOK` 은 사용하지 않습니다. Actions 탭의 *Deploy → Run workflow* 로 수동 배포도 가능합니다.
+Netlify 데모는 저장소 Git 연동으로 빌드되며 `netlify.toml` 의 `ignore` 로 `frontend/` 변경 시에만 빌드됩니다.

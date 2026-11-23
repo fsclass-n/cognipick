@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { faChartPie, faBookOpen, faBullhorn, faPen, faTrash, faUsers } from '@fortawesome/free-solid-svg-icons'
-import { Async, BlockSkeleton, Empty, Icon, PageHero, WriteButton } from '../../components/ui'
+import { Async, BlockSkeleton, Empty, Icon, WriteButton } from '../../components/ui'
 import { LineChart, Sparkline } from '../../components/charts'
 import { api, toast, useApi } from '../../lib/api'
 import { useAuth } from '../../context/AuthContext'
@@ -28,16 +28,16 @@ function Monitoring() {
         return (
           <div className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {cards.map(([k, v, s]) => <div key={k} className="card flex items-end justify-between p-5"><div><p className="text-caption font-semibold text-muted">{k}</p><p className="font-display text-2xl font-bold">{v}</p></div><Sparkline values={s} /></div>)}
-              <div className="card bg-ink p-5 text-white"><p className="text-caption font-semibold text-white/60">AI 엔진</p><p className="mt-1 text-sm font-bold text-accent">{ai.engine}</p><p className="text-caption text-white/50">{ai.model}</p></div>
+              {cards.map(([k, v, s]) => <div key={k} className="tile flex items-end justify-between !p-5"><div><p className="text-caption font-semibold text-muted">{k}</p><p className="font-display text-2xl font-bold">{v}</p></div><Sparkline values={s} /></div>)}
+              <div className="tile bg-brand-600 !p-5 text-white"><p className="text-caption font-semibold text-white/60">AI 엔진</p><p className="mt-1 text-sm font-bold">{ai.engine}</p><p className="text-caption text-white/50">{ai.model}</p></div>
             </div>
             <div className="grid gap-5 lg:grid-cols-2">
-              <div className="card p-5"><h3 className="text-h3 mb-3">데이터 수집 · 활성 사용자 (30일)</h3><LineChart labels={days} area series={[{ name: '수집 건수', values: series.map((s) => s.collected) }, { name: '활성 사용자', values: series.map((s) => s.active_users) }]} /></div>
-              <div className="card p-5"><h3 className="text-h3 mb-3">AI 분석 성공률 · 추천 성과 (%)</h3><LineChart labels={days} series={[{ name: '분석 성공률', values: series.map((s) => s.success_rate) }, { name: '추천 클릭률', values: series.map((s) => s.ctr) }, { name: '수강 전환율', values: series.map((s) => s.conversion) }]} unit="%" /></div>
+              <div className="tile !p-5"><h3 className="text-h3 mb-3">데이터 수집 · 활성 사용자 (30일)</h3><LineChart labels={days} area series={[{ name: '수집 건수', values: series.map((s) => s.collected) }, { name: '활성 사용자', values: series.map((s) => s.active_users) }]} /></div>
+              <div className="tile !p-5"><h3 className="text-h3 mb-3">AI 분석 성공률 · 추천 성과 (%)</h3><LineChart labels={days} series={[{ name: '분석 성공률', values: series.map((s) => s.success_rate) }, { name: '추천 클릭률', values: series.map((s) => s.ctr) }, { name: '수강 전환율', values: series.map((s) => s.conversion) }]} unit="%" /></div>
               <div className="card p-5 lg:col-span-2"><h3 className="text-h3 mb-3">학습 운영 통계: 평균 진도율 · 수료율 (%)</h3><LineChart labels={days} height={220} series={[{ name: '평균 진도율', values: series.map((s) => s.avg_progress) }, { name: '수료율', values: series.map((s) => s.completion_rate) }]} unit="%" /></div>
             </div>
             <div className="grid gap-4 sm:grid-cols-4">
-              {Object.entries({ users: '회원', courses: '강의', enrollments: '수강', demand_posts: '기업 수요' }).map(([k, l]) => <div key={k} className="card p-4 text-center"><p className="font-display text-2xl font-bold text-brand-700">{totals[k]}</p><p className="text-caption text-muted">{l}</p></div>)}
+              {Object.entries({ users: '회원', courses: '강의', enrollments: '수강', demand_posts: '기업 수요' }).map(([k, l]) => <div key={k} className="tile !p-4 text-center"><p className="font-display text-2xl font-bold text-brand-700">{totals[k]}</p><p className="text-caption text-muted">{l}</p></div>)}
             </div>
           </div>
         )
@@ -98,7 +98,7 @@ function Content() {
 
   return (
     <div className="space-y-8">
-      <form onSubmit={save} className="card p-5">
+      <form onSubmit={save} className="tile !p-5">
         <fieldset disabled={readOnly} className="space-y-3 disabled:opacity-60">
           <h3 className="text-h3">{editId ? `강의 수정 #${editId}` : '새 강의 등록'}</h3>
           <div className="grid gap-3 md:grid-cols-4">
@@ -133,7 +133,7 @@ function Content() {
         )}
       </Async>
 
-      <div className="card p-5">
+      <div className="tile !p-5">
         <h3 className="text-h3 mb-3">역량 태그 관리</h3>
         <Async state={skills} skeleton={<BlockSkeleton h="h-20" />}>
           {(rows) => (
@@ -181,16 +181,26 @@ export default function Admin() {
   const { readOnly, user } = useAuth()
   const Body = TABS.find((t) => t[0] === tab)[3]
   return (
-    <>
-      <PageHero eyebrow="Operations" title="운영 관리자" desc={`${user.name} · ${readOnly ? '읽기 전용(테스트 관리자)' : '실제 관리자 · 전체 CRUD'}`} />
-      <div className="container-x py-8">
-        <div className="scrollbar-none mb-6 flex gap-2 overflow-x-auto" role="tablist">
-          {TABS.map(([id, label, ic]) => (
-            <button key={id} role="tab" aria-selected={tab === id} onClick={() => setTab(id)} className={`inline-flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${tab === id ? 'bg-brand-600 text-white shadow-card' : 'bg-white text-muted ring-1 ring-line hover:text-fg'}`}><Icon icon={ic} />{label}</button>
-          ))}
-        </div>
-        <Body />
+    <div className="container-x py-8">
+      <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
+        <aside className="lg:sticky lg:top-28 lg:self-start">
+          <div className="rounded-3xl bg-ink p-5 text-white">
+            <p className="text-eyebrow text-white/50">Ops console</p>
+            <p className="mt-2 font-display text-xl font-bold">운영 관리자</p>
+            <p className="mt-1 text-caption text-white/60">{user.name}</p>
+            <span className={`mt-3 inline-flex rounded-full px-2.5 py-1 text-caption font-bold ${readOnly ? 'bg-accent text-white' : 'bg-white/15'}`}>{readOnly ? '읽기 전용 · 테스트 관리자' : '실제 관리자 · 전체 CRUD'}</span>
+          </div>
+          <nav className="scrollbar-none mt-3 flex gap-2 overflow-x-auto lg:flex-col" role="tablist" aria-label="관리 메뉴">
+            {TABS.map(([id, label, ic]) => (
+              <button key={id} role="tab" aria-selected={tab === id} onClick={() => setTab(id)} className={`inline-flex shrink-0 items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold transition ${tab === id ? 'bg-surface text-ink ring-1 ring-ink' : 'text-muted hover:bg-surface hover:text-ink'}`}><Icon icon={ic} className="w-4" />{label}</button>
+            ))}
+          </nav>
+        </aside>
+        <section className="min-w-0">
+          <h1 className="text-h1 mb-6">{TABS.find((t) => t[0] === tab)[1]}</h1>
+          <Body />
+        </section>
       </div>
-    </>
+    </div>
   )
 }

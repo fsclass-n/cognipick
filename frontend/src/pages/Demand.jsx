@@ -9,8 +9,8 @@ import { useAuth } from '../context/AuthContext'
 function Filter({ label, value, options, onChange }) {
   return (
     <label className="block min-w-40 flex-1">
-      <span className="mb-1 block text-caption font-bold text-white/60">{label}</span>
-      <select value={value} onChange={(e) => onChange(e.target.value)} className="input !border-white/20 !bg-white/10 !text-white [&>option]:text-ink">
+      <span className="mb-1 block text-caption font-bold text-muted">{label}</span>
+      <select value={value} onChange={(e) => onChange(e.target.value)} className="input !rounded-full">
         <option value="">전체</option>{options.map((o) => <option key={o}>{o}</option>)}
       </select>
     </label>
@@ -20,11 +20,11 @@ function Filter({ label, value, options, onChange }) {
 function Structured({ s }) {
   const Tags = ({ list, cls }) => (list?.length ? list.map((x) => <span key={x} className={`rounded-full px-2.5 py-1 text-caption font-bold ${cls}`}>{x}</span>) : <span className="text-caption text-muted">없음</span>)
   return (
-    <div className="space-y-3 rounded-xl bg-brand-50 p-4">
+    <div className="space-y-3 rounded-2xl bg-surface-2 p-4">
       <p className="text-sm font-bold text-brand-800"><Icon icon={faWandMagicSparkles} className="mr-1.5" />AI 구조화 결과 <span className="ml-1 font-medium text-muted">({s.engine})</span></p>
       <p className="text-sm">{s.summary}</p>
       <div className="flex flex-wrap items-center gap-2"><b className="w-12 text-caption">필수</b><Tags list={s.must} cls="bg-brand-600 text-white" /></div>
-      <div className="flex flex-wrap items-center gap-2"><b className="w-12 text-caption">우대</b><Tags list={s.nice} cls="bg-accent text-accent-ink" /></div>
+      <div className="flex flex-wrap items-center gap-2"><b className="w-12 text-caption">우대</b><Tags list={s.nice} cls="bg-accent text-white" /></div>
       <p className="text-caption text-muted">경력 요건: {s.experience}</p>
     </div>
   )
@@ -73,7 +73,7 @@ export default function Demand() {
             <Filter label="직무" value={job} options={opts.jobs} onChange={set('job')} />
             <Filter label="산업" value={industry} options={opts.industries} onChange={set('industry')} />
             <Filter label="지역" value={region} options={opts.regions} onChange={set('region')} />
-          </> : <Skeleton className="h-16 w-full max-w-2xl opacity-20" />}
+          </> : <Skeleton className="h-16 w-full max-w-2xl" />}
         </div>
       </PageHero>
       <div className="container-x space-y-8 py-10">
@@ -82,26 +82,26 @@ export default function Demand() {
             <>
               <div className="grid gap-4 sm:grid-cols-3">
                 {[['최근 월 분석 공고', `${d.kpis.postings.toLocaleString()}건`], ['도출된 역량 키워드', `${d.kpis.skills}개`], ['급상승 역량', d.kpis.top_rising]].map(([k, v]) => (
-                  <div key={k} className="card p-5"><p className="text-caption font-semibold text-muted">{k}</p><p className="mt-1 font-display text-2xl font-bold">{v}</p></div>
+                  <div key={k} className="tile !p-5"><p className="text-caption font-semibold text-muted">{k}</p><p className="mt-1 font-display text-2xl font-bold">{v}</p></div>
                 ))}
               </div>
-              <div className="card flex items-start gap-3 border-accent bg-accent/15 p-5">
-                <Icon icon={faLightbulb} className="mt-1 text-lg text-lime-700" />
+              <div className="flex items-start gap-3 rounded-3xl bg-ink p-6 text-white">
+                <Icon icon={faLightbulb} className="mt-1 text-lg text-accent" />
                 <ul className="space-y-1 text-sm font-medium">{d.insights.map((i) => <li key={i}>{i}</li>)}</ul>
               </div>
               <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-                <div className="card p-5"><h3 className="text-h3 mb-4">역량 키워드 시계열 (Top 5)</h3><LineChart labels={d.months} series={d.trends.map((t) => ({ name: t.skill, values: t.values }))} unit="건" /></div>
-                <div className="card p-5"><h3 className="text-h3 mb-2">수요 워드클라우드</h3><p className="mb-2 text-caption text-muted">글자 크기=공고 빈도 · 형광 계열=급상승</p><WordCloud words={d.wordcloud} /></div>
+                <div className="tile !p-5"><h3 className="text-h3 mb-4">역량 키워드 시계열 (Top 5)</h3><LineChart labels={d.months} series={d.trends.map((t) => ({ name: t.skill, values: t.values }))} unit="건" /></div>
+                <div className="tile !p-5"><h3 className="text-h3 mb-2">수요 워드클라우드</h3><p className="mb-2 text-caption text-muted">글자 크기=공고 빈도 · 코랄=급상승</p><WordCloud words={d.wordcloud} /></div>
               </div>
-              <div className="card p-5">
+              <div className="tile !p-5">
                 <h3 className="text-h3 mb-4">역량별 수요 순위</h3>
                 <ul className="grid gap-x-10 gap-y-3 md:grid-cols-2">
                   {d.top_skills.slice(0, 12).map((s, i) => (
                     <li key={s.skill} className="flex items-center gap-3 text-sm">
                       <span className="w-5 text-right font-display font-bold text-muted">{i + 1}</span>
                       <Link to={`/courses?skill=${encodeURIComponent(s.skill)}`} className="w-28 shrink-0 font-semibold hover:text-brand-700">{s.skill}</Link>
-                      <div className="h-2.5 flex-1 rounded-full bg-surface-2"><div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-700" style={{ width: `${(s.count / d.top_skills[0].count) * 100}%` }} /></div>
-                      <span className={`w-16 text-right text-caption font-bold ${s.growth >= 5 ? 'text-lime-700' : 'text-muted'}`}><Icon icon={faArrowTrendUp} className="mr-0.5" />{s.growth}%</span>
+                      <div className="h-2.5 flex-1 rounded-full bg-surface-2"><div className="h-full rounded-full bg-gradient-to-r from-ink to-brand-600" style={{ width: `${(s.count / d.top_skills[0].count) * 100}%` }} /></div>
+                      <span className={`w-16 text-right text-caption font-bold ${s.growth >= 5 ? 'text-accent' : 'text-muted'}`}><Icon icon={faArrowTrendUp} className="mr-0.5" />{s.growth}%</span>
                     </li>
                   ))}
                 </ul>
@@ -111,7 +111,7 @@ export default function Demand() {
         </Async>
 
         <section id="register" className="scroll-mt-28">
-          <SectionHead eyebrow="For Business" title="기업 수요 등록" desc="필요 직무와 역량 요건을 입력하면 AI가 필수·우대 역량으로 구조화해 학습 과정 설계에 반영합니다." />
+          <SectionHead no="02" eyebrow="For Business" title="기업 수요 등록" desc="필요 직무와 역량 요건을 입력하면 AI가 필수·우대 역량으로 구조화해 학습 과정 설계에 반영합니다." />
           {!user ? (
             <Empty title="기업 담당자 로그인이 필요해요" desc="테스트 기업 담당자 계정으로 바로 체험할 수 있습니다." action={<Link to="/login" className="btn btn-primary">로그인</Link>} />
           ) : !isCompany ? (
@@ -123,7 +123,7 @@ export default function Demand() {
                 <h3 className="text-h3 mb-3"><Icon icon={faBuilding} className="mr-2 text-brand-600" />등록된 수요</h3>
                 <Async state={posts} isEmpty={(d) => !d.length} empty={<Empty title="아직 등록한 수요가 없어요" />}>
                   {(d) => <ul className="space-y-3">{d.map((p) => (
-                    <li key={p.id} className="card p-4"><p className="font-bold">{p.company || '회사명 미입력'} · {p.job}</p><p className="mb-2 text-caption text-muted">{[p.industry, p.region].filter(Boolean).join(' · ')}</p><Structured s={p.structured} /></li>
+                    <li key={p.id} className="tile !p-4"><p className="font-bold">{p.company || '회사명 미입력'} · {p.job}</p><p className="mb-2 text-caption text-muted">{[p.industry, p.region].filter(Boolean).join(' · ')}</p><Structured s={p.structured} /></li>
                   ))}</ul>}
                 </Async>
               </div>

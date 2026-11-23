@@ -12,7 +12,8 @@
   `read_only_guard` middleware in `backend/app/main.py` 403s non-GET `/api/*` for `admin_readonly` (except `/api/auth/*`, `/api/tutor/*`); frontend uses `WriteButton`/`useAuth().readOnly`.
 - Tailwind v4: custom classes via `@utility` in `frontend/src/index.css`. Fonts: IBM Plex Sans KR (display) + Pretendard (body). Icons: FontAwesome only.
 - Charts are hand-written SVG in `frontend/src/components/charts.jsx` (no chart lib).
-- Deploy: push to `main` -> Render (`render.yaml`, autoDeploy + buildFilter) and Netlify Git integration. Do NOT use `RENDER_*_DEPLOY_HOOK` secrets.
+- Deploy: push to `main` -> `.github/workflows/deploy.yml` (paths-filter -> test/build -> Render REST API via `.github/scripts/render-deploy.sh`, secret `RENDER_API_KEY`). Render services have Auto-Deploy Off; no Blueprint, no `RENDER_*_DEPLOY_HOOK`. Netlify uses Git integration.
+- UI concept "Learning Editorial": warm paper bg, cobalt indigo `brand-*` + coral `accent`; Space Grotesk (display) + Pretendard (body); vector covers in `components/Cover.jsx`; bento home; mobile bottom tab bar + right drawer.
 - Shell heredocs over ~4KB get truncated; create big files with the write tool.
 
 ## Workflow

@@ -1,36 +1,37 @@
 import { Link, Outlet } from 'react-router-dom'
-import { faChartLine, faCompassDrafting, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
-import { Icon, Toasts } from '../components/ui'
+import { Toasts } from '../components/ui'
 import { Logo } from '../components/Header'
-import SkillOrbit from '../components/SkillOrbit'
+import Cover from '../components/Cover'
 
-const POINTS = [
-  [faChartLine, '기업 수요 분석', '채용공고·공공 데이터로 뜨는 역량을 읽습니다'],
-  [faWandMagicSparkles, 'AI 역량 진단', '문항 생성부터 레이더 차트 해석까지'],
-  [faCompassDrafting, '맞춤 학습 Pick', '갭을 메우는 로드맵과 강의를 골라드립니다'],
+const TILES = [
+  ['데이터', '01', '기업 수요 분석', '채용공고·공공 데이터로 뜨는 역량을 읽습니다', 'col-span-2'],
+  ['AI', '02', 'AI 역량 진단', '레이더 차트로 보는 내 위치', ''],
+  ['프런트엔드', '03', '맞춤 학습 Pick', '갭을 메우는 로드맵', ''],
 ]
 
 export default function AuthLayout() {
   return (
-    <div className="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
-      <aside className="relative hidden overflow-hidden bg-ink p-12 text-white lg:flex lg:flex-col">
-        <div className="grid-dots absolute inset-0" />
-        <div className="absolute -left-32 top-1/3 size-96 rounded-full bg-brand-600/40 blur-3xl" />
-        <div className="relative"><Logo light /></div>
-        <div className="relative my-auto">
-          <h2 className="text-h1 max-w-md">기업이 원하는 역량,<br />내게 맞는 학습을 <span className="rounded bg-accent px-1.5 text-accent-ink">Pick</span></h2>
-          <div className="mt-4 scale-90"><SkillOrbit /></div>
-          <ul className="mt-2 space-y-3">
-            {POINTS.map(([ic, t, d]) => (
-              <li key={t} className="flex items-start gap-3"><span className="grid size-9 shrink-0 place-items-center rounded-xl bg-white/10 text-accent"><Icon icon={ic} /></span><span className="text-sm"><b className="block">{t}</b><span className="text-white/60">{d}</span></span></li>
+    <div className="grid min-h-screen lg:grid-cols-2">
+      <aside className="relative hidden flex-col bg-surface-2 p-10 lg:flex">
+        <Logo />
+        <div className="my-auto">
+          <p className="text-eyebrow text-brand-700">AI Learning Platform</p>
+          <h2 className="text-display mt-4 max-w-lg !text-[3.25rem]">Learn what<br />companies <span className="underline-accent">need.</span></h2>
+          <p className="mt-4 max-w-md text-body text-muted">기업이 원하는 역량을 데이터로 읽고, 내 역량과 비교해 가장 빠른 학습 경로를 골라드립니다.</p>
+          <div className="mt-10 grid max-w-lg grid-cols-2 gap-3">
+            {TILES.map(([cat, no, t, d, span]) => (
+              <div key={t} className={`overflow-hidden rounded-3xl bg-surface ${span}`}>
+                <Cover category={cat} seed={+no} label={no} className={span ? 'h-32' : 'h-24'} />
+                <div className="p-4"><p className="font-display font-bold">{t}</p><p className="text-caption text-muted">{d}</p></div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
-        <p className="relative text-caption text-white/40">© 2026 cognipick. All rights reserved.</p>
+        <p className="text-caption text-muted">© 2026 cognipick. All rights reserved.</p>
       </aside>
       <main className="flex flex-col bg-bg">
-        <div className="flex items-center justify-between p-5 lg:hidden"><Logo /><Link to="/" className="text-sm font-semibold text-muted">둘러보기</Link></div>
-        <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-5 py-8"><Outlet /></div>
+        <div className="flex items-center justify-between p-5"><span className="lg:invisible"><Logo /></span><Link to="/" className="text-sm font-semibold text-muted hover:text-ink">← 둘러보기</Link></div>
+        <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-5 pb-10"><Outlet /></div>
       </main>
       <Toasts />
     </div>

@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { faCheck, faClock, faPlay, faStar, faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { Async, BlockSkeleton, Icon } from '../components/ui'
-import { Thumb } from '../components/CourseCard'
+import Cover from '../components/Cover'
+import { LevelDots } from '../components/CourseCard'
 import { api, toast, useApi } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
-import { levelColor } from '../lib/site'
 
 export default function CourseDetail() {
   const { id } = useParams()
@@ -30,10 +30,10 @@ export default function CourseDetail() {
         {(c) => (
           <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
             <div>
-              <div className="overflow-hidden rounded-3xl"><Thumb hue={c.hue} label={c.skills[0]} className="h-56 sm:h-72" /></div>
+              <div className="overflow-hidden rounded-[2rem]"><Cover category={c.category} seed={c.id} label={c.category} no={c.id} className="aspect-[16/8]" /></div>
               <div className="mt-6 flex flex-wrap items-center gap-2">
-                <span className={`rounded-full px-2.5 py-1 text-caption font-bold ${levelColor[c.level]}`}>{c.level}</span>
-                {c.skills.map((s) => <Link key={s} to={`/courses?skill=${encodeURIComponent(s)}`} className="chip">{s}</Link>)}
+                <LevelDots level={c.level} />
+                {c.skills.map((s) => <Link key={s} to={`/courses?skill=${encodeURIComponent(s)}`} className="tag hover:border-ink">#{s}</Link>)}
               </div>
               <h1 className="text-h1 mt-3">{c.title}</h1>
               <p className="mt-2 text-sm text-muted">{c.instructor} 강사 · <Icon icon={faStar} className="text-amber-500" /> {c.rating} · {c.learners.toLocaleString()}명 수강</p>
@@ -41,8 +41,8 @@ export default function CourseDetail() {
               <h2 className="text-h2 mb-4 mt-10">커리큘럼</h2>
               <ol className="space-y-3">
                 {c.curriculum.map((t, i) => (
-                  <li key={t} className="card flex items-center gap-4 p-4">
-                    <span className="grid size-9 place-items-center rounded-xl bg-brand-50 font-display font-bold text-brand-700">{i + 1}</span>
+                  <li key={t} className="flex items-center gap-4 border-b border-line py-4">
+                    <span className="num w-8 text-xl font-bold text-muted">{String(i + 1).padStart(2, '0')}</span>
                     <span className="flex-1 font-semibold">{t}</span>
                     {c.progress != null && c.progress >= Math.round(((i + 1) / c.curriculum.length) * 100) && <Icon icon={faCheck} className="text-ok" />}
                   </li>
@@ -50,7 +50,7 @@ export default function CourseDetail() {
               </ol>
             </div>
             <aside className="lg:sticky lg:top-24 lg:self-start">
-              <div className="card space-y-4 p-6">
+              <div className="tile space-y-4">
                 <div className="flex gap-4 text-sm text-muted"><span><Icon icon={faClock} className="mr-1" />{c.hours}시간</span><span><Icon icon={faUserGroup} className="mr-1" />{c.learners.toLocaleString()}명</span></div>
                 {c.progress != null ? (
                   <>

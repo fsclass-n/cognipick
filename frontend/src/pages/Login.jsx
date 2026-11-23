@@ -50,14 +50,14 @@ export default function Login() {
 
   return (
     <div className="animate-rise">
-      <h1 className="text-h1">다시 오셨네요</h1>
+      <h1 className="text-h1">Welcome back<span className="text-accent">.</span></h1>
       <p className="mt-2 text-body text-muted">로그인하고 맞춤 학습 Pick을 이어가세요.</p>
 
-      <div className="mt-6 rounded-2xl border border-brand-200 bg-brand-50/60 p-4">
-        <p className="mb-3 text-caption font-bold uppercase tracking-wider text-brand-700">테스트 계정 간편 로그인</p>
+      <div className="mt-6 rounded-3xl bg-surface-2 p-4">
+        <p className="mb-3 text-eyebrow text-muted">테스트 계정 간편 로그인</p>
         <div className="grid grid-cols-3 gap-2">
           {TESTS.map((t) => (
-            <button key={t.role} disabled={busy} onClick={() => quick(t)} className="flex flex-col items-center gap-1.5 rounded-xl border border-line bg-white px-2 py-3 text-caption font-bold transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-card disabled:opacity-50">
+            <button key={t.role} disabled={busy} onClick={() => quick(t)} className="flex flex-col items-center gap-1.5 rounded-2xl border border-line bg-surface px-2 py-4 text-caption font-bold transition hover:-translate-y-0.5 hover:border-ink hover:shadow-lift disabled:opacity-50">
               <Icon icon={t.icon} className="text-lg text-brand-600" />{t.label}
             </button>
           ))}

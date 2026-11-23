@@ -12,14 +12,14 @@ function Result({ r, onRetry }) {
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-3">
         {[['종합 역량 점수', r.overall], ['직무 준비도', `${r.readiness}%`], ['우선 보강 역량', r.gaps[0]?.skill]].map(([k, v]) => (
-          <div key={k} className="card p-5"><p className="text-caption font-semibold text-muted">{k}</p><p className="mt-1 font-display text-3xl font-bold text-brand-700">{v}</p></div>
+          <div key={k} className="tile !p-5"><p className="text-caption font-semibold text-muted">{k}</p><p className="mt-1 font-display text-3xl font-bold text-brand-700">{v}</p></div>
         ))}
       </div>
       <div className="grid gap-5 lg:grid-cols-2">
-        <div className="card p-5"><h3 className="text-h3 mb-2">역량 레이더 · {r.job}</h3>
+        <div className="tile !p-5"><h3 className="text-h3 mb-2">역량 레이더 · {r.job}</h3>
           <RadarChart axes={axes} />
           <div className="mt-2 flex justify-center"><Legend items={[{ label: '내 역량', color: '#4f46e5' }, { label: '기업 요구 수준', color: '#8fb800' }]} /></div></div>
-        <div className="card p-5"><h3 className="text-h3 mb-1">기업 수요 대비 갭(Gap)</h3><p className="mb-5 text-caption text-muted">검은 눈금이 기업 요구 수준, 형광 사선이 채워야 할 구간입니다.</p><GapBridge gaps={r.gaps} /></div>
+        <div className="tile !p-5"><h3 className="text-h3 mb-1">기업 수요 대비 갭(Gap)</h3><p className="mb-5 text-caption text-muted">검은 눈금이 기업 요구 수준, 코랄 사선이 채워야 할 구간입니다.</p><GapBridge gaps={r.gaps} /></div>
       </div>
       <div className="flex flex-wrap gap-3">
         <Link to={`/pick?job=${encodeURIComponent(r.job)}`} className="btn btn-primary !px-6 !py-3"><Icon icon={faBullseye} />갭을 메우는 학습 Pick 보기</Link>
@@ -96,7 +96,7 @@ export default function Diagnosis() {
       <div className="container-x py-10">
         <div className="mb-8 flex flex-wrap gap-2" role="tablist" aria-label="목표 직무">
           {JOBS.map((j) => (
-            <button key={j} role="tab" aria-selected={job === j} onClick={() => pick(j)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${job === j ? 'border-brand-600 bg-brand-600 text-white shadow-card' : 'border-line bg-white hover:border-brand-300'}`}>{j}</button>
+            <button key={j} role="tab" aria-selected={job === j} onClick={() => pick(j)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${job === j ? 'border-ink bg-ink text-white' : 'border-line bg-surface hover:border-ink'}`}>{j}</button>
           ))}
         </div>
         {!job ? (

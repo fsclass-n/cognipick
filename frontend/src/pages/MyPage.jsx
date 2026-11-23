@@ -21,7 +21,7 @@ export default function MyPage() {
             <>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {[[faBookOpen, '수강 중인 강의', `${stats.enrolled}개`], [faAward, '수료한 강의', `${stats.completed}개`], [faClock, '누적 학습 시간', `${stats.hours}h`], [faGauge, '평균 진도율', `${stats.avg_progress}%`]].map(([ic, k, v]) => (
-                  <div key={k} className="card flex items-center gap-4 p-5"><span className="grid size-12 place-items-center rounded-2xl bg-brand-50 text-brand-600"><Icon icon={ic} /></span><div><p className="text-caption font-semibold text-muted">{k}</p><p className="font-display text-2xl font-bold">{v}</p></div></div>
+                  <div key={k} className="tile flex items-center gap-4 !p-5"><span className="grid size-12 place-items-center rounded-2xl bg-brand-50 text-brand-600"><Icon icon={ic} /></span><div><p className="text-caption font-semibold text-muted">{k}</p><p className="font-display text-2xl font-bold">{v}</p></div></div>
                 ))}
               </div>
               <section>
@@ -38,8 +38,8 @@ export default function MyPage() {
             {(d) => (
               <div className="grid gap-5 lg:grid-cols-[auto_1fr_1fr]">
                 <div className="card flex flex-col items-center justify-center gap-2 p-6"><Donut value={d.readiness} size={120} label="직무 준비도" /><p className="font-bold">{d.job}</p><p className="text-caption text-muted">직무 준비도</p></div>
-                <div className="card p-5"><RadarChart axes={d.gaps.map((g) => ({ label: g.skill, a: g.score, b: g.required }))} size={300} /></div>
-                <div className="card p-5"><GapBridge gaps={d.gaps.slice(0, 5)} /></div>
+                <div className="tile !p-5"><RadarChart axes={d.gaps.map((g) => ({ label: g.skill, a: g.score, b: g.required }))} size={300} /></div>
+                <div className="tile !p-5"><GapBridge gaps={d.gaps.slice(0, 5)} /></div>
               </div>
             )}
           </Async>
