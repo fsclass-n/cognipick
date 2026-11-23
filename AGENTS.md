@@ -18,3 +18,8 @@
 
 ## Workflow
 - Report in Korean. Commit and push to `origin main` after each task. Never commit `.env` or DB files.
+
+## Presentation
+- Edit `tools/build_presentation.py` (slide data `D` = text/script, `s1..s16` = layouts), then `.venv/Scripts/python tools/build_presentation.py` -> `docs/cognipick_발표자료.pptx` + `docs/presentation.md` (deps: `tools/requirements.txt`).
+- Screenshots in `docs/assets/*.png` are real captures (Playwright against local app). Speaker: 김모란. Be honest: demand numbers are seed data; real crawler is roadmap.
+- To check layout, export slides via PowerPoint COM (`Presentation.Export(dir, 'PNG', 1600, 900)`).
