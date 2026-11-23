@@ -68,11 +68,12 @@ function Hero({ d, user, diag }) {
         </div>
 
         <div className="relative mx-auto w-full max-w-[560px] lg:col-span-6">
-          <div className="absolute inset-[6%] animate-spin-slow rounded-full border-2 border-dashed border-brand-200" />
-          <div className="pick-mask relative mx-auto aspect-square w-[86%] overflow-hidden">
-            <img src={PHOTOS.hero} alt="함께 학습하는 사람들" className="size-full object-cover" fetchPriority="high" />
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-900/50 via-transparent to-brand-500/10" />
+          <div className="arch absolute left-[19%] top-6 aspect-[4/5] w-[68%] border-2 border-brand-200 !overflow-visible" aria-hidden />
+          <div className="arch relative mx-auto aspect-[4/5] w-[68%] translate-x-[-4%] shadow-lift">
+            <img src={PHOTOS.hero} alt="함께 학습하는 사람들" className="size-full object-cover object-[68%_center]" fetchPriority="high" />
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-900/55 via-transparent to-brand-500/10" />
           </div>
+          <span className="absolute right-[10%] top-[6%] size-5 rounded-full bg-accent shadow-[0_0_0_8px_rgb(32_214_165/0.18)]" aria-hidden />
           <div className="glass-light absolute -left-2 top-[12%] w-56 animate-float rounded-2xl p-4 sm:left-0">
             <p className="text-eyebrow flex justify-between text-muted">Top demand<span className="text-accent-ink">LIVE</span></p>
             {lead ? <>
@@ -213,7 +214,7 @@ export default function Main() {
             <Link to="/demand#register" className="btn btn-accent mt-8 !px-6 !py-3.5"><Icon icon={faBuilding} />기업 수요 등록하기</Link>
           </div>
           <div className="relative mx-auto w-full max-w-md">
-            <div className="pick-mask aspect-square overflow-hidden"><img src={PHOTOS.business} alt="노트북으로 협업하는 팀" loading="lazy" className="size-full object-cover" /></div>
+            <div className="arch aspect-[4/5] w-[80%] mx-auto"><img src={PHOTOS.business} alt="노트북으로 협업하는 팀" loading="lazy" className="size-full object-cover" /></div>
             <div className="glass absolute -left-4 top-8 w-60 rounded-2xl p-4 text-sm">“FastAPI·Docker 실무 필수, AWS 우대, 경력 2년 이상”</div>
             <div className="glass-light absolute -right-2 bottom-10 w-56 space-y-1.5 rounded-2xl p-4 text-sm text-ink">
               <p className="text-eyebrow text-muted">AI structured</p>

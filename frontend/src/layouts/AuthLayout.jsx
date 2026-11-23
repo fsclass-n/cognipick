@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { faArrowLeft, faArrowTrendUp, faRobot } from '@fortawesome/free-solid-svg-icons'
 import { Icon, Toasts } from '../components/ui'
-import Logo, { LogoMark } from '../components/Logo'
+import Logo, { RingMark } from '../components/Logo'
 import { PHOTOS } from '../lib/photos'
 
 const BARS = [['SQL', 82], ['Python', 64], ['통계', 41]]
@@ -40,7 +40,7 @@ export default function AuthLayout() {
         <img src={photo} alt="" className="absolute inset-0 size-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-br from-ink/95 via-brand-900/75 to-brand-600/40" />
         <div className="dots-dark absolute inset-0" />
-        <LogoMark size={520} mono className="absolute -bottom-40 -right-36 opacity-[0.06]" />
+        <RingMark size={620} className="absolute -bottom-56 -right-56 text-white/[0.12]" />
         <div className="relative flex h-full flex-col justify-between p-12 text-white xl:p-14">
           <Logo light />
           <div className="grid gap-12">

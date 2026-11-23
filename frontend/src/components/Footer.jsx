@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { faArrowUp, faBook, faEnvelope, faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { Icon } from './ui'
-import Logo, { LogoMark } from './Logo'
+import Logo, { RingMark } from './Logo'
 import { LINKS, TEAM } from '../lib/site'
 
 const Col = ({ title, children }) => (
@@ -15,7 +15,7 @@ export default function Footer() {
   return (
     <footer className="relative mt-28 overflow-hidden bg-ink pb-24 text-white lg:pb-0">
       <div className="dots-dark pointer-events-none absolute inset-0" />
-      <LogoMark size={560} mono className="pointer-events-none absolute -right-40 -top-24 opacity-[0.04]" />
+      <RingMark size={640} className="pointer-events-none absolute -right-56 -top-40 text-white/[0.07]" />
       <div className="container-x relative pt-16">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
