@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { faArrowUp, faBook, faEnvelope, faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { Icon } from './ui'
+import Logo, { LogoMark } from './Logo'
 import { LINKS, TEAM } from '../lib/site'
 
 const Col = ({ title, children }) => (
@@ -12,11 +13,14 @@ const X = ({ href, icon, children }) => <li><a className="inline-flex items-cent
 
 export default function Footer() {
   return (
-    <footer className="mt-28 bg-ink pb-24 text-white lg:pb-0">
-      <div className="container-x pt-16">
+    <footer className="relative mt-28 overflow-hidden bg-ink pb-24 text-white lg:pb-0">
+      <div className="dots-dark pointer-events-none absolute inset-0" />
+      <LogoMark size={560} mono className="pointer-events-none absolute -right-40 -top-24 opacity-[0.04]" />
+      <div className="container-x relative pt-16">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <p className="font-display text-3xl font-bold leading-tight tracking-tight">기업이 원하는 역량을 읽고,<br /><span className="text-accent">나에게 맞는 학습</span>을 Pick.</p>
+            <Logo light />
+            <p className="mt-6 font-display text-2xl font-bold leading-snug tracking-tight">기업이 원하는 역량을 읽고,<br /><span className="text-accent">나에게 맞는 학습</span>을 Pick.</p>
             <p className="mt-4 max-w-sm text-sm text-white/55">cognipick — AI 기반 지능형 학습 플랫폼 & 기업 수요 분석 비즈니스 플랫폼</p>
           </div>
           <div className="grid gap-10 sm:grid-cols-2 lg:col-span-8 lg:grid-cols-4">
@@ -41,7 +45,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="overflow-hidden" aria-hidden>
-        <p className="select-none whitespace-nowrap text-center font-display text-[22vw] font-bold leading-[0.78] tracking-[-0.07em] text-white/[0.06]">cognipick</p>
+        <p className="select-none whitespace-nowrap text-center font-display text-[22vw] font-bold leading-[0.78] tracking-[-0.07em] text-transparent [-webkit-text-stroke:1px_rgb(255_255_255/0.12)]">cognipick</p>
       </div>
     </footer>
   )

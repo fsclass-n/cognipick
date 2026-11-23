@@ -13,7 +13,7 @@
 - Tailwind v4: custom classes via `@utility` in `frontend/src/index.css`. Fonts: IBM Plex Sans KR (display) + Pretendard (body). Icons: FontAwesome only.
 - Charts are hand-written SVG in `frontend/src/components/charts.jsx` (no chart lib).
 - Deploy: push to `main` -> `.github/workflows/deploy.yml` (paths-filter -> test/build -> Render REST API via `.github/scripts/render-deploy.sh`, secret `RENDER_API_KEY`). Render services have Auto-Deploy Off; no Blueprint, no `RENDER_*_DEPLOY_HOOK`. Netlify uses Git integration.
-- UI concept "Learning Editorial": warm paper bg, cobalt indigo `brand-*` + coral `accent`; Space Grotesk (display) + Pretendard (body); vector covers in `components/Cover.jsx`; bento home; mobile bottom tab bar + right drawer.
+- UI concept "Pick Signal": electric indigo `brand-*` + signal mint `accent` (use `text-accent-ink` on light bg, `text-ink` on mint fills); Sora (display) + Pretendard (body). Signature guitar-pick silhouette: `components/Logo.jsx`, `pick-mask` utility. Photos: Unsplash License images self-hosted as WebP in `frontend/public/images` (mapping + credits in `src/lib/photos.js`, shown on /info/data-sources); never hotlink or guess Unsplash URLs, never use Unsplash+ images. SNS buttons follow Kakao/Naver/Google brand guides (`components/SocialButtons.jsx`).
 - Shell heredocs over ~4KB get truncated; create big files with the write tool.
 
 ## Workflow

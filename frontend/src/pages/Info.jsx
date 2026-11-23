@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { Async, Empty, PageHero } from '../components/ui'
 import { LINKS } from '../lib/site'
+import { CREDITS } from '../lib/photos'
 import { useApi } from '../lib/api'
 import NotFound from './NotFound'
 
@@ -20,7 +21,7 @@ function Notices() {
   return (
     <Async state={state} isEmpty={(d) => !d.length} empty={<Empty title="등록된 공지가 없어요" />}>
       {(d) => <ul className="space-y-3">{d.map((n) => (
-        <li key={n.id} className="tile !p-5"><p className="font-bold">{n.pinned && <span className="mr-2 rounded bg-accent px-1.5 py-0.5 text-caption text-white">고정</span>}{n.title}</p><p className="text-body mt-1 text-muted">{n.body}</p><p className="mt-2 text-caption text-muted">{n.created_at.slice(0, 10)}</p></li>
+        <li key={n.id} className="tile !p-5"><p className="font-bold">{n.pinned && <span className="mr-2 rounded bg-accent px-1.5 py-0.5 text-caption text-ink">고정</span>}{n.title}</p><p className="text-body mt-1 text-muted">{n.body}</p><p className="mt-2 text-caption text-muted">{n.created_at.slice(0, 10)}</p></li>
       ))}</ul>}
     </Async>
   )
@@ -32,7 +33,21 @@ export default function Info() {
   if (slug === 'faq') { title = '자주 묻는 질문'; body = <div className="space-y-3">{FAQ.map(([q, a]) => <details key={q} className="card group p-5"><summary className="cursor-pointer font-bold">{q}</summary><p className="text-body mt-3 text-muted">{a}</p></details>)}</div> }
   else if (slug === 'notices') { title = '공지사항'; body = <Notices /> }
   else if (slug === 'inquiry') { title = '1:1 문의'; body = <div className="card p-6 text-body">문의는 <a className="font-bold text-brand-700" href={`mailto:${LINKS.email}`}>{LINKS.email}</a> 또는 <a className="font-bold text-brand-700" href={`${LINKS.github}/issues`} target="_blank" rel="noreferrer">GitHub Issues</a>로 남겨 주세요.</div> }
-  else if (DOCS[slug]) { title = DOCS[slug][0]; body = <ul className="card text-body space-y-3 p-6">{DOCS[slug][1].map((t) => <li key={t}>{t}</li>)}</ul> }
+  else if (DOCS[slug]) {
+    title = DOCS[slug][0]
+    body = (
+      <div className="space-y-6">
+        <ul className="card text-body space-y-3 p-6">{DOCS[slug][1].map((t) => <li key={t}>{t}</li>)}</ul>
+        {slug === 'data-sources' && (
+          <div className="card p-6">
+            <h2 className="text-h3">이미지 출처 (Unsplash License)</h2>
+            <p className="mt-1 text-caption text-muted">무료·상업적 이용이 허용된 Unsplash 사진을 최적화해 사용합니다.</p>
+            <ul className="mt-4 grid gap-2 text-sm sm:grid-cols-2">{CREDITS.map(([k, who, url]) => <li key={k}><span className="text-muted">{k}</span> · <a className="font-semibold text-brand-700 hover:underline" href={url} target="_blank" rel="noreferrer">{who}</a></li>)}</ul>
+          </div>
+        )}
+      </div>
+    )
+  }
   else return <NotFound />
   return (<><PageHero eyebrow="Help Center" title={title} /><div className="container-x max-w-3xl py-10">{body}</div></>)
 }

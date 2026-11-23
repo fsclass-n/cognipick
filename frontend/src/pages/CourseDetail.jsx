@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { faCheck, faClock, faPlay, faStar, faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { Async, BlockSkeleton, Icon } from '../components/ui'
-import Cover from '../components/Cover'
-import { LevelDots } from '../components/CourseCard'
+import { LevelDots, PhotoCover } from '../components/CourseCard'
 import { api, toast, useApi } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 
@@ -30,7 +29,7 @@ export default function CourseDetail() {
         {(c) => (
           <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
             <div>
-              <div className="overflow-hidden rounded-[2rem]"><Cover category={c.category} seed={c.id} label={c.category} no={c.id} className="aspect-[16/8]" /></div>
+              <PhotoCover c={c} className="aspect-[16/8] rounded-[2rem]" />
               <div className="mt-6 flex flex-wrap items-center gap-2">
                 <LevelDots level={c.level} />
                 {c.skills.map((s) => <Link key={s} to={`/courses?skill=${encodeURIComponent(s)}`} className="tag hover:border-ink">#{s}</Link>)}

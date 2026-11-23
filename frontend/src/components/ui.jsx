@@ -31,7 +31,7 @@ function StateBox({ icon, tone, title, desc, action, role }) {
 export const Empty = ({ title = '표시할 데이터가 없습니다', desc, action }) => <StateBox icon={faInbox} tone="bg-surface-2 text-ink" title={title} desc={desc} action={action} />
 
 export const ErrorState = ({ error, onRetry }) => (
-  <StateBox role="alert" icon={faCircleExclamation} tone="bg-accent-soft text-accent" title="데이터를 불러오지 못했어요" desc={error?.message || '알 수 없는 오류가 발생했습니다.'}
+  <StateBox role="alert" icon={faCircleExclamation} tone="bg-red-50 text-danger" title="데이터를 불러오지 못했어요" desc={error?.message || '알 수 없는 오류가 발생했습니다.'}
     action={onRetry && <button className="btn btn-ink" onClick={onRetry}><Icon icon={faRotateRight} />다시 시도</button>} />
 )
 
@@ -101,7 +101,7 @@ export function Stat({ label, value, sub, tone = '' }) {
 }
 
 const TOAST_STYLE = { info: faCircleInfo, ok: faCircleCheck, warn: faTriangleExclamation, error: faCircleExclamation }
-const TOAST_TONE = { info: 'text-brand-300', ok: 'text-emerald-400', warn: 'text-amber-300', error: 'text-accent' }
+const TOAST_TONE = { info: 'text-brand-300', ok: 'text-emerald-400', warn: 'text-amber-300', error: "text-red-300" }
 
 export function Toasts() {
   const [items, setItems] = useState([])

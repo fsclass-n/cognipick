@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { faCheck, faCircle } from '@fortawesome/free-solid-svg-icons'
 import { Icon } from '../components/ui'
+import SocialButtons from '../components/SocialButtons'
 import { api, toast } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import { validatePassword } from '../lib/site'
@@ -24,21 +25,23 @@ export default function Register() {
 
   return (
     <div className="animate-rise">
-      <h1 className="text-h1">cognipick 시작하기</h1>
-      <p className="mt-2 text-body text-muted">1분이면 가입하고 역량 진단을 시작할 수 있어요.</p>
-      <form onSubmit={submit} className="mt-6 space-y-4">
+      <h1 className="text-h1">회원가입</h1>
+      <p className="mt-1.5 text-body text-muted">1분이면 가입하고 역량 진단을 시작할 수 있어요.</p>
+      <div className="mt-7"><SocialButtons /></div>
+      <div className="my-6 flex items-center gap-3 text-caption text-muted"><span className="h-px flex-1 bg-line" />또는 이메일로 가입<span className="h-px flex-1 bg-line" /></div>
+      <form onSubmit={submit} className="space-y-4">
         <div className="grid grid-cols-2 gap-2 rounded-xl bg-surface-2 p-1" role="radiogroup" aria-label="가입 유형">
           {[['learner', '학습자'], ['company', '기업 담당자']].map(([v, l]) => (
-            <button type="button" key={v} role="radio" aria-checked={f.role === v} onClick={() => setF({ ...f, role: v })} className={`rounded-lg py-2 text-sm font-semibold transition ${f.role === v ? 'bg-white text-brand-700 shadow' : 'text-muted'}`}>{l}</button>
+            <button type="button" key={v} role="radio" aria-checked={f.role === v} onClick={() => setF({ ...f, role: v })} className={`rounded-lg py-2 text-sm font-semibold transition ${f.role === v ? 'bg-white text-brand-700 shadow-card' : 'text-muted'}`}>{l}</button>
           ))}
         </div>
-        <label className="block"><span className="mb-1 block text-sm font-semibold">이름</span><input required className="input" value={f.name} onChange={set('name')} maxLength={50} autoComplete="name" /></label>
-        <label className="block"><span className="mb-1 block text-sm font-semibold">이메일</span><input required type="email" className="input" value={f.email} onChange={set('email')} autoComplete="email" /></label>
-        <label className="block"><span className="mb-1 block text-sm font-semibold">비밀번호</span><input required type="password" className="input" value={f.password} onChange={set('password')} autoComplete="new-password" /></label>
+        <label className="block"><span className="mb-1 block text-sm font-semibold">이름</span><input required className="input h-12" value={f.name} onChange={set('name')} maxLength={50} autoComplete="name" /></label>
+        <label className="block"><span className="mb-1 block text-sm font-semibold">이메일</span><input required type="email" className="input h-12" value={f.email} onChange={set('email')} autoComplete="email" /></label>
+        <label className="block"><span className="mb-1 block text-sm font-semibold">비밀번호</span><input required type="password" className="input h-12" value={f.password} onChange={set('password')} autoComplete="new-password" /></label>
         <ul className="flex flex-wrap gap-2">
           {RULES.map(([l, re]) => { const ok = re.test(f.password); return <li key={l} className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption font-bold transition ${ok ? 'bg-emerald-50 text-emerald-700' : 'bg-surface-2 text-muted'}`}><Icon icon={ok ? faCheck : faCircle} className="text-[0.6rem]" />{l}</li> })}
         </ul>
-        <button className="btn btn-primary w-full !py-3" disabled={busy || !f.name || !f.email || !validatePassword(f.password)}>{busy ? '가입 중…' : '회원가입'}</button>
+        <button className="btn btn-primary h-12 w-full" disabled={busy || !f.name || !f.email || !validatePassword(f.password)}>{busy ? '가입 중…' : '회원가입'}</button>
       </form>
       <p className="mt-6 text-center text-sm text-muted">이미 계정이 있나요? <Link to="/login" className="font-bold text-brand-700">로그인</Link></p>
     </div>

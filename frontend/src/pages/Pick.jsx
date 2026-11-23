@@ -3,7 +3,7 @@ import { faCalendarCheck, faFlagCheckered, faTriangleExclamation } from '@fortaw
 import { Async, BlockSkeleton, Empty, Icon, PageHero, SectionHead } from '../components/ui'
 import { GapBridge } from '../components/charts'
 import CourseCard from '../components/CourseCard'
-import Cover from '../components/Cover'
+import { PhotoCover } from '../components/CourseCard'
 import { useApi } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import { JOBS } from '../lib/site'
@@ -26,8 +26,8 @@ export default function Pick() {
           {(d) => (
             <>
               {!d.diagnosed && (
-                <div className="flex flex-wrap items-center gap-4 rounded-3xl bg-accent-soft p-5">
-                  <Icon icon={faTriangleExclamation} className="text-xl text-accent" />
+                <div className="flex flex-wrap items-center gap-4 rounded-3xl border border-amber-200 bg-amber-50 p-5">
+                  <Icon icon={faTriangleExclamation} className="text-xl text-amber-500" />
                   <p className="flex-1 text-sm font-medium">아직 {d.job} 진단 결과가 없어 모든 역량을 기초 수준으로 가정했어요. 진단하면 추천이 정확해집니다.</p>
                   <Link to={`/diagnosis?job=${encodeURIComponent(d.job)}`} className="btn btn-primary">역량 진단하기</Link>
                 </div>
@@ -46,14 +46,14 @@ export default function Pick() {
                       <div className="grid gap-3 md:grid-cols-3">
                         {s.courses.map((c) => (
                           <Link key={c.id} to={`/courses/${c.id}`} className="card flex gap-3 overflow-hidden p-3 transition hover:-translate-y-0.5 hover:shadow-pop">
-                            <Cover category={c.category} seed={c.id} className="size-16 shrink-0 rounded-xl" />
+                            <PhotoCover c={c} label={false} className="size-16 shrink-0 rounded-xl" />
                             <div className="min-w-0"><p className="line-clamp-2 text-sm font-bold">{c.title}</p><p className="mt-1 text-caption text-muted">{c.hours}시간 · {c.closes.join(', ')}</p></div>
                           </Link>
                         ))}
                       </div>
                     </li>
                   ))}
-                  <li className="relative pl-14"><span className="absolute left-0 top-0 grid size-10 place-items-center rounded-full bg-accent text-white ring-4 ring-bg"><Icon icon={faFlagCheckered} /></span><h3 className="text-h3 pt-1.5">목표 직무 준비 완료</h3></li>
+                  <li className="relative pl-14"><span className="absolute left-0 top-0 grid size-10 place-items-center rounded-full bg-accent text-ink ring-4 ring-bg"><Icon icon={faFlagCheckered} /></span><h3 className="text-h3 pt-1.5">목표 직무 준비 완료</h3></li>
                 </ol>
               </section>
               <section>

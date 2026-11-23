@@ -31,7 +31,7 @@ export default function Floaters() {
         className={`relative grid size-12 place-items-center rounded-full bg-surface text-ink shadow-lift transition-all duration-300 hover:bg-ink hover:text-white ${show ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'}`}>
         <svg viewBox="0 0 48 48" className="absolute inset-0 -rotate-90" aria-hidden>
           <circle cx="24" cy="24" r="22" fill="none" stroke="#e4e2db" strokeWidth="2" />
-          <circle cx="24" cy="24" r="22" fill="none" stroke="#ff6b4a" strokeWidth="2.5" strokeLinecap="round" strokeDasharray={`${C * p} ${C}`} />
+          <circle cx="24" cy="24" r="22" fill="none" stroke="#20d6a5" strokeWidth="2.5" strokeLinecap="round" strokeDasharray={`${C * p} ${C}`} />
         </svg>
         <Icon icon={faArrowUp} className="relative" />
       </button>

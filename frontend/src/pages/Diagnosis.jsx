@@ -19,7 +19,7 @@ function Result({ r, onRetry }) {
         <div className="tile !p-5"><h3 className="text-h3 mb-2">역량 레이더 · {r.job}</h3>
           <RadarChart axes={axes} />
           <div className="mt-2 flex justify-center"><Legend items={[{ label: '내 역량', color: '#4f46e5' }, { label: '기업 요구 수준', color: '#8fb800' }]} /></div></div>
-        <div className="tile !p-5"><h3 className="text-h3 mb-1">기업 수요 대비 갭(Gap)</h3><p className="mb-5 text-caption text-muted">검은 눈금이 기업 요구 수준, 코랄 사선이 채워야 할 구간입니다.</p><GapBridge gaps={r.gaps} /></div>
+        <div className="tile !p-5"><h3 className="text-h3 mb-1">기업 수요 대비 갭(Gap)</h3><p className="mb-5 text-caption text-muted">검은 눈금이 기업 요구 수준, 민트 사선이 채워야 할 구간입니다.</p><GapBridge gaps={r.gaps} /></div>
       </div>
       <div className="flex flex-wrap gap-3">
         <Link to={`/pick?job=${encodeURIComponent(r.job)}`} className="btn btn-primary !px-6 !py-3"><Icon icon={faBullseye} />갭을 메우는 학습 Pick 보기</Link>

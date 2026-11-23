@@ -24,7 +24,7 @@ function Structured({ s }) {
       <p className="text-sm font-bold text-brand-800"><Icon icon={faWandMagicSparkles} className="mr-1.5" />AI 구조화 결과 <span className="ml-1 font-medium text-muted">({s.engine})</span></p>
       <p className="text-sm">{s.summary}</p>
       <div className="flex flex-wrap items-center gap-2"><b className="w-12 text-caption">필수</b><Tags list={s.must} cls="bg-brand-600 text-white" /></div>
-      <div className="flex flex-wrap items-center gap-2"><b className="w-12 text-caption">우대</b><Tags list={s.nice} cls="bg-accent text-white" /></div>
+      <div className="flex flex-wrap items-center gap-2"><b className="w-12 text-caption">우대</b><Tags list={s.nice} cls="bg-accent text-ink" /></div>
       <p className="text-caption text-muted">경력 요건: {s.experience}</p>
     </div>
   )
@@ -91,7 +91,7 @@ export default function Demand() {
               </div>
               <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
                 <div className="tile !p-5"><h3 className="text-h3 mb-4">역량 키워드 시계열 (Top 5)</h3><LineChart labels={d.months} series={d.trends.map((t) => ({ name: t.skill, values: t.values }))} unit="건" /></div>
-                <div className="tile !p-5"><h3 className="text-h3 mb-2">수요 워드클라우드</h3><p className="mb-2 text-caption text-muted">글자 크기=공고 빈도 · 코랄=급상승</p><WordCloud words={d.wordcloud} /></div>
+                <div className="tile !p-5"><h3 className="text-h3 mb-2">수요 워드클라우드</h3><p className="mb-2 text-caption text-muted">글자 크기=공고 빈도 · 민트=급상승</p><WordCloud words={d.wordcloud} /></div>
               </div>
               <div className="tile !p-5">
                 <h3 className="text-h3 mb-4">역량별 수요 순위</h3>
@@ -101,7 +101,7 @@ export default function Demand() {
                       <span className="w-5 text-right font-display font-bold text-muted">{i + 1}</span>
                       <Link to={`/courses?skill=${encodeURIComponent(s.skill)}`} className="w-28 shrink-0 font-semibold hover:text-brand-700">{s.skill}</Link>
                       <div className="h-2.5 flex-1 rounded-full bg-surface-2"><div className="h-full rounded-full bg-gradient-to-r from-ink to-brand-600" style={{ width: `${(s.count / d.top_skills[0].count) * 100}%` }} /></div>
-                      <span className={`w-16 text-right text-caption font-bold ${s.growth >= 5 ? 'text-accent' : 'text-muted'}`}><Icon icon={faArrowTrendUp} className="mr-0.5" />{s.growth}%</span>
+                      <span className={`w-16 text-right text-caption font-bold ${s.growth >= 5 ? 'text-accent-ink' : 'text-muted'}`}><Icon icon={faArrowTrendUp} className="mr-0.5" />{s.growth}%</span>
                     </li>
                   ))}
                 </ul>

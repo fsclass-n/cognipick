@@ -188,7 +188,7 @@ export default function Admin() {
             <p className="text-eyebrow text-white/50">Ops console</p>
             <p className="mt-2 font-display text-xl font-bold">운영 관리자</p>
             <p className="mt-1 text-caption text-white/60">{user.name}</p>
-            <span className={`mt-3 inline-flex rounded-full px-2.5 py-1 text-caption font-bold ${readOnly ? 'bg-accent text-white' : 'bg-white/15'}`}>{readOnly ? '읽기 전용 · 테스트 관리자' : '실제 관리자 · 전체 CRUD'}</span>
+            <span className={`mt-3 inline-flex rounded-full px-2.5 py-1 text-caption font-bold ${readOnly ? 'bg-amber-400 text-ink' : 'bg-white/15'}`}>{readOnly ? '읽기 전용 · 테스트 관리자' : '실제 관리자 · 전체 CRUD'}</span>
           </div>
           <nav className="scrollbar-none mt-3 flex gap-2 overflow-x-auto lg:flex-col" role="tablist" aria-label="관리 메뉴">
             {TABS.map(([id, label, ic]) => (

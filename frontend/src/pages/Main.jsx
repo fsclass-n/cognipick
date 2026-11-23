@@ -1,36 +1,33 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { faArrowRight, faArrowTrendUp, faMagnifyingGlass, faRobot, faWandMagicSparkles, faBuilding } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faArrowTrendUp, faMagnifyingGlass, faWandMagicSparkles, faBuilding, faFlagCheckered, faDatabase, faBrain, faBullseye } from '@fortawesome/free-solid-svg-icons'
 import { Async, CardSkeleton, Icon, SectionHead, Skeleton } from '../components/ui'
 import CourseCard from '../components/CourseCard'
-import Cover from '../components/Cover'
+import { LogoMark } from '../components/Logo'
 import { Donut, WordCloud } from '../components/charts'
 import { useApi } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
+import { PHOTOS } from '../lib/photos'
 
-const COLLECTIONS = [
-  { job: '데이터 분석가', cat: '데이터', steps: ['SQL', 'Python', '데이터 시각화', '통계'], weeks: 10, desc: '데이터로 의사결정을 이끄는 첫 직무' },
-  { job: 'AI/ML 엔지니어', cat: 'AI', steps: ['Python', '머신러닝', '딥러닝', 'LLM/프롬프트'], weeks: 16, desc: '모델을 만들고 서비스로 연결합니다' },
-  { job: '클라우드/DevOps', cat: '인프라', steps: ['Docker', 'AWS', 'CI/CD', 'Kubernetes'], weeks: 12, desc: '배포와 운영을 자동화하는 전문가' },
-  { job: '백엔드 개발자', cat: '백엔드', steps: ['Python', 'FastAPI', 'SQL', 'Docker'], weeks: 11, desc: '안정적인 API와 데이터 구조 설계' },
-  { job: '프런트엔드 개발자', cat: '프런트엔드', steps: ['TypeScript', 'React', 'Git 협업'], weeks: 9, desc: '사용자 경험을 코드로 구현합니다' },
+const LINES = [
+  { job: '데이터 분석가', color: '#4a3aff', weeks: 10, steps: ['SQL', 'Python', '데이터 시각화', '통계', '머신러닝'] },
+  { job: 'AI/ML 엔지니어', color: '#20d6a5', weeks: 16, steps: ['Python', '머신러닝', '딥러닝', 'LLM/프롬프트', 'MLOps'] },
+  { job: '클라우드/DevOps', color: '#f59e0b', weeks: 12, steps: ['Docker', 'AWS', 'CI/CD', 'Kubernetes'] },
+  { job: '백엔드 개발자', color: '#ec4899', weeks: 11, steps: ['Python', 'FastAPI', 'SQL', 'Docker', 'AWS'] },
+  { job: '프런트엔드 개발자', color: '#0ea5e9', weeks: 9, steps: ['TypeScript', 'React', 'Git 협업'] },
 ]
 
-function MiniArea({ values, months, growth }) {
-  const W = 320, H = 110, max = Math.max(...values), min = Math.min(...values)
-  const pts = values.map((v, i) => [(i * W) / (values.length - 1), H - 8 - ((v - min) / (max - min || 1)) * (H - 24)])
+function MiniArea({ values }) {
+  const W = 240, H = 64, max = Math.max(...values), min = Math.min(...values)
+  const pts = values.map((v, i) => [(i * W) / (values.length - 1), H - 6 - ((v - min) / (max - min || 1)) * (H - 16)])
   const line = pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x},${y}`).join(' ')
-  const [lx, ly] = pts[pts.length - 1]
   return (
-    <div className="mt-4">
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full overflow-visible" role="img" aria-label="최근 12개월 수요 추이">
-        <defs><linearGradient id="ma" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#ff6b4a" stopOpacity=".45" /><stop offset="1" stopColor="#ff6b4a" stopOpacity="0" /></linearGradient></defs>
-        <path d={`${line} L${W},${H} L0,${H} Z`} fill="url(#ma)" />
-        <path d={line} fill="none" stroke="#ff6b4a" strokeWidth="2.5" strokeLinejoin="round" />
-        <circle cx={lx} cy={ly} r="5" fill="#ff6b4a" stroke="#111114" strokeWidth="2" />
-      </svg>
-      <div className="mt-2 flex justify-between text-caption text-white/45"><span>{months[0]}</span><span className="font-semibold text-accent">3개월 {growth > 0 ? '+' : ''}{growth}%</span><span>{months[months.length - 1]}</span></div>
-    </div>
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full overflow-visible" aria-hidden>
+      <defs><linearGradient id="ma" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#4a3aff" stopOpacity=".35" /><stop offset="1" stopColor="#4a3aff" stopOpacity="0" /></linearGradient></defs>
+      <path d={`${line} L${W},${H} L0,${H} Z`} fill="url(#ma)" />
+      <path d={line} fill="none" stroke="#4a3aff" strokeWidth="2.5" strokeLinejoin="round" />
+      <circle cx={pts.at(-1)[0]} cy={pts.at(-1)[1]} r="4.5" fill="#20d6a5" stroke="#fff" strokeWidth="2" />
+    </svg>
   )
 }
 
@@ -38,11 +35,112 @@ function HeroSearch() {
   const [q, setQ] = useState('')
   const nav = useNavigate()
   return (
-    <form onSubmit={(e) => { e.preventDefault(); nav(`/courses?q=${encodeURIComponent(q.trim())}`) }} className="mt-8 flex max-w-xl items-center gap-2 rounded-full border border-line bg-bg p-1.5 pl-5 focus-within:border-ink">
+    <form onSubmit={(e) => { e.preventDefault(); nav(`/courses?q=${encodeURIComponent(q.trim())}`) }} className="mt-8 flex max-w-xl items-center gap-2 rounded-2xl border border-line bg-white p-2 pl-5 shadow-card focus-within:border-brand-400 focus-within:ring-4 focus-within:ring-brand-100">
       <Icon icon={faMagnifyingGlass} className="text-muted" />
-      <input value={q} onChange={(e) => setQ(e.target.value)} className="min-w-0 flex-1 bg-transparent py-2 text-[0.95rem] outline-none" placeholder="배우고 싶은 역량을 검색해 보세요 (예: LLM)" aria-label="강의 검색" />
-      <button className="btn btn-ink !py-2.5">검색</button>
+      <input value={q} onChange={(e) => setQ(e.target.value)} className="min-w-0 flex-1 bg-transparent py-2.5 text-[0.95rem] outline-none" placeholder="배우고 싶은 역량을 검색해 보세요 (예: LLM, SQL)" aria-label="강의 검색" />
+      <button className="btn btn-primary">검색</button>
     </form>
+  )
+}
+
+function Hero({ d, user, diag }) {
+  const lead = d?.trends?.[0]
+  return (
+    <section className="dots-bg relative overflow-hidden">
+      <div className="pointer-events-none absolute -right-40 -top-40 size-[40rem] rounded-full bg-brand-200/50 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-40 left-1/4 size-[28rem] rounded-full bg-accent/15 blur-3xl" />
+      <div className="container-x relative grid items-center gap-12 py-12 lg:grid-cols-12 lg:py-20">
+        <div className="animate-rise lg:col-span-6">
+          <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-white px-3 py-1.5 text-caption font-semibold text-brand-700 shadow-card">
+            <span className="relative flex size-2"><span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-75" /><span className="relative inline-flex size-2 rounded-full bg-accent" /></span>
+            K-AI 데이터 × 채용공고 실시간 분석
+          </span>
+          <h1 className="text-display mt-6">기업이 찾는 역량을<br />데이터로 <span className="text-gradient">Pick.</span></h1>
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">채용공고·공공 고용 데이터·AI Hub 데이터셋을 AI가 분석하고, 내 역량 진단과 맞붙여 갭을 가장 빠르게 메우는 학습 경로를 설계합니다.</p>
+          <HeroSearch />
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <Link to="/diagnosis" className="btn btn-ink !px-5"><Icon icon={faWandMagicSparkles} />3분 역량 진단</Link>
+            <Link to="/demand" className="btn btn-ghost !px-5">수요 리포트<Icon icon={faArrowRight} /></Link>
+          </div>
+          <p className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-caption font-semibold text-muted">
+            <span className="text-eyebrow text-muted/70">Data from</span><span>AI Hub</span><span>공공데이터포털</span><span>고용24</span><span>Google Gemini</span>
+          </p>
+        </div>
+
+        <div className="relative mx-auto w-full max-w-[560px] lg:col-span-6">
+          <div className="absolute inset-[6%] animate-spin-slow rounded-full border-2 border-dashed border-brand-200" />
+          <div className="pick-mask relative mx-auto aspect-square w-[86%] overflow-hidden">
+            <img src={PHOTOS.hero} alt="함께 학습하는 사람들" className="size-full object-cover" fetchPriority="high" />
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-900/50 via-transparent to-brand-500/10" />
+          </div>
+          <div className="glass-light absolute -left-2 top-[12%] w-56 animate-float rounded-2xl p-4 sm:left-0">
+            <p className="text-eyebrow flex justify-between text-muted">Top demand<span className="text-accent-ink">LIVE</span></p>
+            {lead ? <>
+              <p className="mt-1 font-display text-xl font-bold">{lead.skill}</p>
+              <p className="text-caption text-muted">전체 공고의 <b className="text-fg">{d.top_skills[0].share}%</b></p>
+              <div className="mt-2"><MiniArea values={lead.values} /></div>
+            </> : <Skeleton className="mt-2 h-20" />}
+          </div>
+          <div className="glass-light absolute -right-2 top-[46%] w-52 animate-float-slow rounded-2xl p-4 sm:right-0">
+            {user && diag ? (
+              <div className="flex items-center gap-3"><Donut value={diag.readiness} size={64} label="준비도" /><div><p className="text-caption text-muted">직무 준비도</p><p className="font-bold">{diag.job}</p></div></div>
+            ) : (
+              <><p className="text-caption text-muted">맞춤 추천</p><p className="mt-1 font-bold leading-snug">실전 SQL로 배우는<br />데이터 분석</p><p className="mt-2 inline-flex rounded-full bg-accent px-2.5 py-0.5 text-caption font-bold text-ink">매칭 92%</p></>
+            )}
+          </div>
+          <div className="glass-light absolute bottom-[6%] left-[12%] flex animate-float items-center gap-2 rounded-full py-2 pl-2 pr-4 text-sm font-semibold [animation-delay:1s]">
+            <LogoMark size={26} /> 갭 3개를 메우는 경로를 찾았어요
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function StatBand({ d }) {
+  const items = [['월 분석 공고', d ? `${(d.kpis.postings / 1000).toFixed(1)}K` : '—', faDatabase], ['추적 역량 키워드', d?.kpis.skills ?? '—', faBrain], ['급상승 1위', d?.kpis.top_rising || '—', faArrowTrendUp], ['진단 → 추천', '3분', faBullseye]]
+  return (
+    <section className="container-x -mt-2">
+      <div className="dots-dark grid grid-cols-2 gap-px overflow-hidden rounded-3xl bg-ink text-white lg:grid-cols-4">
+        {items.map(([k, v, ic]) => (
+          <div key={k} className="flex items-center gap-4 bg-ink/90 p-6">
+            <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/10 text-accent"><Icon icon={ic} /></span>
+            <div className="min-w-0"><p className="text-caption text-white/55">{k}</p><p className="num truncate text-2xl font-bold">{v}</p></div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+/** Skill Metro: 직무 로드맵을 지하철 노선도처럼 — 역(역량)을 따라가면 목표 직무에 도착 */
+function SkillMetro() {
+  return (
+    <div className="card overflow-hidden">
+      <div className="scrollbar-none overflow-x-auto">
+        <ul className="min-w-[760px] divide-y divide-line">
+          {LINES.map((l, i) => (
+            <li key={l.job} className="grid grid-cols-[200px_1fr] items-center gap-6 px-6 py-6 transition hover:bg-bg">
+              <Link to={`/diagnosis?job=${encodeURIComponent(l.job)}`} className="group flex items-center gap-3">
+                <span className="grid size-9 shrink-0 place-items-center rounded-full font-display text-sm font-bold text-white" style={{ background: l.color }}>{i + 1}</span>
+                <span><b className="block font-display group-hover:underline">{l.job}</b><span className="text-caption text-muted">{l.steps.length}개 역 · 약 {l.weeks}주</span></span>
+              </Link>
+              <div className="relative flex items-center justify-between">
+                <span className="absolute inset-x-2 top-1/2 h-1.5 -translate-y-1/2 rounded-full" style={{ background: l.color }} />
+                {l.steps.map((s) => (
+                  <Link key={s} to={`/courses?skill=${encodeURIComponent(s)}`} className="group relative z-10 flex flex-col items-center">
+                    <span className="size-5 rounded-full border-[5px] bg-white transition group-hover:scale-125" style={{ borderColor: l.color }} />
+                    <span className="absolute top-7 whitespace-nowrap text-caption font-semibold text-muted group-hover:text-ink">{s}</span>
+                  </Link>
+                ))}
+                <span className="relative z-10 grid size-9 place-items-center rounded-full text-white shadow-md" style={{ background: l.color }} title="목표 직무 도착"><Icon icon={faFlagCheckered} className="text-xs" /></span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <p className="border-t border-line bg-bg px-6 py-3 text-caption text-muted">역(역량)을 누르면 해당 강의로, 노선 이름을 누르면 직무 진단으로 이동합니다.</p>
+    </div>
   )
 }
 
@@ -52,81 +150,27 @@ export default function Main() {
   const courses = useApi('/api/courses?sort=popular')
   const reco = useApi('/api/recommend', !!user)
   const diag = useApi('/api/diagnosis/latest', !!user)
-  const d = demand.data
   const picks = user && reco.data?.picks?.length ? reco.data.picks.slice(0, 4) : null
-  const lead = d?.trends?.[0]
 
   return (
     <>
-      {/* HERO — Bento */}
-      <section className="container-x pt-6 sm:pt-10">
-        <div className="grid-12">
-          <div className="tile col-span-12 flex flex-col justify-between !p-7 sm:!p-10 lg:col-span-8 lg:row-span-2">
-            <div className="animate-rise">
-              <p className="text-eyebrow flex items-center gap-2 text-brand-700"><span className="size-1.5 animate-pulse rounded-full bg-accent" />Enterprise demand × AI learning</p>
-              <h1 className="text-display mt-6">기업이 찾는 역량을,<br />데이터로 <span className="text-brand-600">Pick</span><span className="text-accent">.</span></h1>
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">채용공고·공공 고용 데이터·K-AI 데이터셋을 AI가 분석하고, 내 역량 진단 결과와 맞붙여 갭을 가장 빠르게 메우는 학습 경로를 설계합니다.</p>
-              <HeroSearch />
-            </div>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <Link to="/diagnosis" className="btn btn-primary !px-6 !py-3.5"><Icon icon={faWandMagicSparkles} />3분 역량 진단</Link>
-              <Link to="/demand" className="btn btn-ghost !px-6 !py-3.5">수요 리포트 보기<Icon icon={faArrowRight} /></Link>
-            </div>
-          </div>
+      <Hero d={demand.data} user={user} diag={diag.data} />
+      <StatBand d={demand.data} />
 
-          <div className="tile col-span-12 bg-ink !p-6 text-white sm:col-span-6 lg:col-span-4">
-            <p className="text-eyebrow flex justify-between text-white/50">Top demand<span className="text-accent">LIVE</span></p>
-            {d && lead ? (
-              <>
-                <p className="mt-3 font-display text-4xl font-bold">{lead.skill}</p>
-                <p className="mt-1 text-sm text-white/60">전체 공고의 <b className="text-white">{d.top_skills[0].share}%</b>에서 요구</p>
-                <MiniArea values={lead.values} months={d.months} growth={d.top_skills[0].growth} />
-              </>
-            ) : <Skeleton className="mt-4 h-44 opacity-20" />}
-          </div>
-
-          <div className="tile col-span-12 flex flex-col justify-between bg-brand-600 !p-6 text-white sm:col-span-6 lg:col-span-4">
-            {user && diag.data ? (
-              <div className="flex items-center gap-5">
-                <div className="rounded-full bg-white p-1"><Donut value={diag.data.readiness} size={92} label="직무 준비도" /></div>
-                <div><p className="text-eyebrow text-white/60">My readiness</p><p className="mt-1 font-display text-xl font-bold">{diag.data.job}</p><p className="text-sm text-white/70">우선 보강: {diag.data.gaps[0]?.skill}</p></div>
-              </div>
-            ) : (
-              <div><p className="text-eyebrow text-white/60">Your Pick</p><p className="mt-3 font-display text-2xl font-bold leading-snug">내 역량, 기업 기준으로<br />몇 점일까요?</p></div>
-            )}
-            <Link to={user && diag.data ? '/pick' : '/diagnosis'} className="mt-6 inline-flex items-center justify-between rounded-full bg-white/15 px-5 py-3 text-sm font-semibold transition hover:bg-white hover:text-brand-700">
-              {user && diag.data ? '내 학습 Pick 보기' : '무료로 진단하기'}<Icon icon={faArrowRight} />
-            </Link>
-          </div>
-
-          {[['월 분석 공고', d ? `${(d.kpis.postings / 1000).toFixed(1)}K` : null], ['추적 역량', d?.kpis.skills], ['급상승 1위', d?.kpis.top_rising]].map(([k, v]) => (
-            <div key={k} className="tile col-span-6 !p-5 sm:col-span-4 lg:col-span-3">
-              <p className="text-caption font-semibold text-muted">{k}</p>
-              {v != null ? <p className="num mt-2 truncate text-2xl font-bold sm:text-3xl">{v}</p> : <Skeleton className="mt-3 h-8 w-20" />}
-            </div>
-          ))}
-          <Link to="/tutor" className="tile lift col-span-6 flex flex-col justify-between bg-accent !p-5 text-white sm:col-span-12 lg:col-span-3">
-            <Icon icon={faRobot} className="text-xl" />
-            <p className="mt-3 font-display text-lg font-bold leading-tight">AI 튜터에게<br />바로 물어보기 →</p>
-          </Link>
-        </div>
-      </section>
-
-      {/* 01 Demand */}
       <section className="container-x pt-24">
         <SectionHead no="01" eyebrow="Demand Top" title="지금 기업이 가장 많이 찾는 역량" desc="전 직무·산업·지역 기준 최근 12개월 채용 요건 분석 결과입니다."
           right={<Link to="/demand" className="btn btn-ghost">전체 분석<Icon icon={faArrowRight} /></Link>} />
         <Async state={demand} skeleton={<div className="grid gap-5 lg:grid-cols-2"><Skeleton className="h-96" /><Skeleton className="h-96" /></div>}>
           {(dd) => (
             <div className="grid gap-5 lg:grid-cols-12">
-              <ol className="lg:col-span-7">
+              <ol className="card divide-y divide-line px-2 lg:col-span-7">
                 {dd.top_skills.slice(0, 8).map((s, i) => (
                   <li key={s.skill}>
-                    <Link to={`/courses?skill=${encodeURIComponent(s.skill)}`} className="group grid grid-cols-[3rem_1fr_auto] items-center gap-4 border-b border-line py-4">
-                      <span className="num text-2xl font-bold text-muted group-hover:text-brand-600">{String(i + 1).padStart(2, '0')}</span>
-                      <span><b className="font-display text-lg group-hover:underline">{s.skill}</b><span className="ml-2 text-caption text-muted">{s.category}</span>
-                        <span className="mt-2 block h-1 rounded-full bg-surface-2"><span className="block h-full rounded-full bg-ink transition-all group-hover:bg-brand-600" style={{ width: `${(s.count / dd.top_skills[0].count) * 100}%` }} /></span></span>
-                      <span className={`num text-sm font-bold ${s.growth >= 5 ? 'text-accent' : 'text-muted'}`}><Icon icon={faArrowTrendUp} className="mr-1 text-xs" />{s.growth > 0 ? '+' : ''}{s.growth}%</span>
+                    <Link to={`/courses?skill=${encodeURIComponent(s.skill)}`} className="group grid grid-cols-[2.75rem_1fr_auto] items-center gap-4 rounded-xl px-3 py-3.5 transition hover:bg-bg">
+                      <span className={`num grid size-9 place-items-center rounded-xl text-sm font-bold ${i < 3 ? 'bg-brand-600 text-white' : 'bg-surface-2 text-muted'}`}>{i + 1}</span>
+                      <span><b className="font-display group-hover:text-brand-700">{s.skill}</b><span className="ml-2 text-caption text-muted">{s.category}</span>
+                        <span className="mt-2 block h-1.5 rounded-full bg-surface-2"><span className="block h-full rounded-full bg-gradient-to-r from-brand-600 to-brand-400" style={{ width: `${(s.count / dd.top_skills[0].count) * 100}%` }} /></span></span>
+                      <span className={`num rounded-full px-2 py-0.5 text-caption font-bold ${s.growth >= 5 ? 'bg-accent-soft text-accent-ink' : 'text-muted'}`}><Icon icon={faArrowTrendUp} className="mr-1" />{s.growth > 0 ? '+' : ''}{s.growth}%</span>
                     </Link>
                   </li>
                 ))}
@@ -134,14 +178,13 @@ export default function Main() {
               <div className="tile flex flex-col lg:col-span-5">
                 <p className="text-eyebrow text-muted">Keyword cloud</p>
                 <div className="flex flex-1 items-center"><WordCloud words={dd.wordcloud} /></div>
-                <p className="text-caption text-muted">글자 크기 = 공고 빈도 · <span className="text-accent">코랄</span> = 3개월 급상승</p>
+                <p className="text-caption text-muted">글자 크기 = 공고 빈도 · <span className="font-semibold text-accent-ink">민트</span> = 3개월 급상승</p>
               </div>
             </div>
           )}
         </Async>
       </section>
 
-      {/* 02 Courses */}
       <section className="container-x pt-24">
         <SectionHead no="02" eyebrow={picks ? 'Picked for you' : 'Popular now'} title={picks ? `${user.name}님을 위한 맞춤 추천` : '맞춤 추천 강의'}
           desc={picks ? '진단 결과와 기업 수요의 갭을 가장 크게 줄이는 순서입니다.' : '역량 진단을 마치면 나만의 추천으로 바뀝니다. 지금은 인기 강의를 보여드려요.'}
@@ -155,45 +198,28 @@ export default function Main() {
         </Async>
       </section>
 
-      {/* 03 Roadmap Lookbook */}
-      <section className="pt-24">
-        <div className="container-x"><SectionHead no="03" eyebrow="Roadmap collection" title="인기 학습 로드맵" desc="직무별로 기업이 요구하는 역량 순서를 따라 엮은 컬렉션입니다." /></div>
-        <div className="scrollbar-none flex snap-x snap-mandatory scroll-px-4 gap-5 overflow-x-auto pb-4" style={{ paddingInline: 'max(1rem, calc((100vw - 1280px) / 2 + 2rem))' }}>
-          {COLLECTIONS.map((r, i) => (
-            <Link key={r.job} to={`/diagnosis?job=${encodeURIComponent(r.job)}`} className="group relative w-[78vw] shrink-0 snap-start overflow-hidden rounded-3xl sm:w-[380px]">
-              <div className="transition-transform duration-700 group-hover:scale-105"><Cover category={r.cat} seed={i + 3} className="aspect-[3/4]" /></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-6 text-white">
-                <p className="text-eyebrow text-white/60">Collection {String(i + 1).padStart(2, '0')} · {r.weeks}주</p>
-                <h3 className="mt-2 font-display text-3xl font-bold">{r.job}</h3>
-                <p className="mt-1 text-sm text-white/70">{r.desc}</p>
-                <p className="mt-4 flex flex-wrap items-center gap-1.5 text-caption font-semibold">
-                  {r.steps.map((s, k) => <span key={s} className="inline-flex items-center gap-1.5"><span className="rounded-full bg-white/15 px-2.5 py-1 backdrop-blur">{s}</span>{k < r.steps.length - 1 && <span className="text-accent">→</span>}</span>)}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
+      <section className="container-x pt-24">
+        <SectionHead no="03" eyebrow="Skill Metro" title="인기 학습 로드맵 노선도" desc="직무마다 기업이 요구하는 역량을 순서대로 잇는 노선입니다. 역을 하나씩 지나면 목표 직무에 도착해요." />
+        <SkillMetro />
       </section>
 
-      {/* 04 Business */}
       <section className="container-x pt-24">
-        <div className="grid overflow-hidden rounded-[2rem] bg-surface-2 lg:grid-cols-2">
-          <div className="p-8 sm:p-12">
-            <p className="text-eyebrow text-brand-700">04 · For Business</p>
+        <div className="relative grid items-center gap-10 overflow-hidden rounded-[2rem] bg-ink p-8 text-white sm:p-12 lg:grid-cols-2">
+          <div className="dots-dark absolute inset-0" />
+          <div className="relative">
+            <p className="text-eyebrow text-accent">04 · For Business</p>
             <h2 className="text-h1 mt-4">채용 요건을 입력하면,<br />AI가 학습 과정으로 구조화합니다</h2>
-            <p className="mt-4 max-w-lg text-body text-muted">기업 담당자가 필요 직무와 역량 요건을 등록하면 필수·우대 역량이 자동 분류되어 학습 과정 설계와 추천에 바로 반영됩니다.</p>
-            <Link to="/demand#register" className="btn btn-ink mt-8 !px-6 !py-3.5"><Icon icon={faBuilding} />기업 수요 등록하기</Link>
+            <p className="mt-4 max-w-lg text-white/65">기업 담당자가 필요 직무와 역량 요건을 등록하면 필수·우대 역량이 자동 분류되어 학습 과정 설계와 추천에 바로 반영됩니다.</p>
+            <Link to="/demand#register" className="btn btn-accent mt-8 !px-6 !py-3.5"><Icon icon={faBuilding} />기업 수요 등록하기</Link>
           </div>
-          <div className="paper-grid relative min-h-72 bg-surface">
-            <div className="absolute inset-8 flex flex-col justify-center gap-3">
-              <div className="w-4/5 rounded-2xl border border-line bg-bg p-4 text-sm shadow-lift">"FastAPI·Docker 실무 필수, AWS 경험 우대, 경력 2년 이상"</div>
-              <div className="ml-auto w-4/5 space-y-2 rounded-2xl bg-ink p-4 text-sm text-white shadow-lift">
-                <p className="text-eyebrow text-white/50">AI structured</p>
-                <p><span className="mr-2 text-white/50">필수</span><b>FastAPI</b> · <b>Docker</b></p>
-                <p><span className="mr-2 text-white/50">우대</span><b className="text-accent">AWS</b></p>
-                <p><span className="mr-2 text-white/50">경력</span>2년 이상</p>
-              </div>
+          <div className="relative mx-auto w-full max-w-md">
+            <div className="pick-mask aspect-square overflow-hidden"><img src={PHOTOS.business} alt="노트북으로 협업하는 팀" loading="lazy" className="size-full object-cover" /></div>
+            <div className="glass absolute -left-4 top-8 w-60 rounded-2xl p-4 text-sm">“FastAPI·Docker 실무 필수, AWS 우대, 경력 2년 이상”</div>
+            <div className="glass-light absolute -right-2 bottom-10 w-56 space-y-1.5 rounded-2xl p-4 text-sm text-ink">
+              <p className="text-eyebrow text-muted">AI structured</p>
+              <p><span className="mr-2 text-muted">필수</span><b>FastAPI · Docker</b></p>
+              <p><span className="mr-2 text-muted">우대</span><b className="rounded bg-accent-soft px-1.5 text-accent-ink">AWS</b></p>
+              <p><span className="mr-2 text-muted">경력</span>2년 이상</p>
             </div>
           </div>
         </div>
