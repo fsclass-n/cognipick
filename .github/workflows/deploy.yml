@@ -49,6 +49,13 @@ jobs:
         with: { python-version: "3.11", cache: pip }
       - run: pip install -r requirements.txt
       - run: python -m pytest backend/tests -q
+      - name: Docker image build check (Render 와 동일한 Dockerfile)
+        run: docker build -t cognipick-api:ci .
+      - name: Container smoke test
+        run: |
+          docker run -d --name api -p 8000:8000 -e JWT_SECRET_KEY=ci-secret cognipick-api:ci
+          for i in $(seq 1 20); do curl -fsS localhost:8000/health && exit 0; sleep 2; done
+          docker logs api; exit 1
 
   build-web:
     needs: changes

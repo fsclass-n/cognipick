@@ -15,6 +15,17 @@ if [ -z "$ID" ]; then
 fi
 [ -n "$ID" ] || { echo "::error::Render 서비스 '${NAME}' 를 찾지 못했습니다."; exit 1; }
 echo "service ${NAME} -> ${ID}"
+SVC=$(curl -fsS "${AUTH[@]}" "${API}/services/${ID}")
+OWNER=$(echo "$SVC" | jq -r '.ownerId')
+echo "$SVC" | jq '{name, type, repo, branch, rootDir, autoDeploy, env: .serviceDetails.env, runtime: .serviceDetails.runtime,
+  dockerfilePath: .serviceDetails.envSpecificDetails.dockerfilePath, dockerContext: .serviceDetails.envSpecificDetails.dockerContext,
+  buildCommand: (.serviceDetails.envSpecificDetails.buildCommand // .serviceDetails.buildCommand), publishPath: .serviceDetails.publishPath}' || true
+
+print_logs() {
+  echo "::group::Render ${1} logs (최근 150줄)"
+  curl -fsS "${AUTH[@]}" "${API}/logs?ownerId=${OWNER}&resource=${ID}&type=${1}&direction=backward&limit=150"     | jq -r '.logs | reverse | .[] | "\(.timestamp) \(.message)"' || echo "(로그 조회 실패)"
+  echo "::endgroup::"
+}
 
 DEPLOY=$(curl -fsS -X POST "${AUTH[@]}" -H "Content-Type: application/json" \
   -d "{\"clearCache\":\"do_not_clear\",\"commitId\":\"${GITHUB_SHA}\"}" "${API}/services/${ID}/deploys" | jq -r '.id')
@@ -25,7 +36,7 @@ for _ in $(seq 1 90); do
   echo "status: ${STATUS}"
   case "$STATUS" in
     live) echo "✅ ${NAME} 배포 완료"; exit 0 ;;
-    build_failed|update_failed|canceled|deactivated|pre_deploy_failed) echo "::error::${NAME} 배포 실패 (${STATUS})"; exit 1 ;;
+    build_failed|update_failed|canceled|deactivated|pre_deploy_failed) print_logs build; print_logs app; echo "::error::${NAME} 배포 실패 (${STATUS}) - 위 Render logs 그룹을 확인하세요"; exit 1 ;;
   esac
   sleep 20
 done
